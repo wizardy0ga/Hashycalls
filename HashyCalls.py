@@ -91,7 +91,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print(BANNER)
-    for pair in [ {'Version': '1.0.0'}, {'Author': 'wizardy0ga'}]:
+    for pair in [ {'Version': '1.1.0'}, {'Author': 'wizardy0ga'}]:
         for key, value in pair.items():
             print(f"{WHITE}[{CYAN}+{WHITE}] {key}: {value}")
     print("\n")
@@ -102,10 +102,17 @@ if __name__ == "__main__":
     else:
         with open(args.file, 'r') as file:
             user_api_call_import = file.read().split('\n')
+    
     if user_api_call_import == None:
         _print(f"{RED}No function calls were specified. Specify a list of function calls with {WHITE}--apicalls{RED} or the path of a file containing the api calls with {WHITE}--file{RED}.{END}")
         exit(1)
-    [user_api_call_import.remove(function) for function in user_api_call_import if function in INTERNAL_FUNCTIONS]
+    
+    for function in user_api_call_import:
+        if function in INTERNAL_FUNCTIONS:
+            user_api_call_import.remove(function)
+            _print(f"{GREEN}{function}{WHITE} function is included by default. Omitting.")
+    #[user_api_call_import.remove(function) for function in user_api_call_import if function in INTERNAL_FUNCTIONS]
+
     for function in user_api_call_import:
         if function not in WINDOWS_API_INFO.keys():
             _print(f"{RED}Failed to get function information for {WHITE}{function}{RED}. Please add this function to the data set at {WHITE}source/data/winapi.json{END}")
