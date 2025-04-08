@@ -14,8 +14,14 @@ Hashycalls provides the following code pieces for the developer:
 
 Each header file generated will have randomized hashes generated for each function address to resolve. Changing the hashes in a program is simply done by generating a new hashycalls header file & swapping the old header file with it.
 
-> ![IMPORTANT]
+> [IMPORTANT]
 > HashyCalls only supports the x64 architecture in its current version.
+
+### Version Table
+| Component | Version |
+| - | - |
+| Script | 1.2.0 |
+| C Template | 1.0.0 | 
 
 ## Usage
 
@@ -37,6 +43,7 @@ Use the [hashycalls.py](/HashyCalls.py) script to generate the templates. The ar
 | -o, --outfile FILE_NAME| A name for the output header file. |
 | -a, --algo ALGO | The hashing algorithm to use when hashing & resolving api calls. Defaults to sdbm. |
 | -ga, --global_api | Include code to create a globally accessible hashed API structure. |
+| -s, --seed | A seed for the hash. Defaults to a random int |
 
 ##### Examples
 ###### Create base template using djb2 algorithm with api calls listed in file
@@ -233,3 +240,10 @@ int main() {
 ## Credits
 
 - [reverseame](https://github.com/reverseame) for their windows api data set. It has been very useful. Can't thank them enough.
+
+## Change Log
+
+| Date | Component | Version | Comment |
+| - | - | - | - |
+| March 25th 2025 | Script | 1.1.0 | Added stdout for instances where a default api call was specified at the command line |
+| April 7th 2025 | Script | 1.2.0 | <ul><li>Added an argument for hash seed</li><li>Added script, template & command line info to source code comment header.</li><li>Resolved an issue with default hash of 'System32' for use in LoadDllFromSystem32ByHash function directory searching. The hash was using 'system32' instead of the default 'System32' which broke the function.</li><li>Added error handling for instances where an invalid file path is given to --file</ul> |

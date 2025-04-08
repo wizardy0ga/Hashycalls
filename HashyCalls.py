@@ -1,7 +1,11 @@
 import argparse
 import random
 import json
+import sys
 import os
+
+SCRIPT_VERSION = "1.2.0"
+TEMPLATE_VERSION = "1.0.0"
 
 GREEN = "\033[1;32m"
 PURPLE = "\033[1;35m"
@@ -27,7 +31,7 @@ DLL_HASHES = [
 # Required for env variables & directory searches
 STRING_HASHES = [
     "windir",
-    "system32"
+    "System32"
 ]
 
 DEFAULT_OUTFILE_NAME = "hashycalls.h"
@@ -86,12 +90,13 @@ if __name__ == "__main__":
     parser.add_argument('-a', '--algo', choices=['djb2', 'sdbm'], default='sdbm', help='Hashing algorithm to use when hashing the windows apis')
     parser.add_argument('-ga', '--global_api', action='store_true', help='Include code for hashing API globally, allowing entire program to access hashed API calls')
     parser.add_argument('-o', '--outfile', type=str, help=f'A name for the header file. Defaults to {DEFAULT_OUTFILE_NAME}', default=DEFAULT_OUTFILE_NAME)
+    parser.add_argument('-s', '--seed', type=int, help='A seed for the hash. Defaults to a random int', default=random.randint(1000, 10000))
     input_mutex_group.add_argument('--file', type=str, help='Path to a file containing the api calls to hash')
     input_mutex_group.add_argument('--apicalls', nargs='+', type=str, help='A list of api calls to hash. Seperate each call with a space.')
     args = parser.parse_args()
 
     print(BANNER)
-    for pair in [ {'Version': '1.1.0'}, {'Author': 'wizardy0ga'}]:
+    for pair in [{'Author': 'wizardy0ga'}, {'Script Version': SCRIPT_VERSION}, {'C Template Version': TEMPLATE_VERSION}]:
         for key, value in pair.items():
             print(f"{WHITE}[{CYAN}+{WHITE}] {key}: {value}")
     print("\n")
@@ -100,8 +105,12 @@ if __name__ == "__main__":
     if not args.file:
         user_api_call_import = args.apicalls
     else:
-        with open(args.file, 'r') as file:
-            user_api_call_import = file.read().split('\n')
+        try:
+            with open(args.file, 'r') as file:
+                user_api_call_import = file.read().split('\n')
+        except FileNotFoundError:
+            _print(f"{RED}Could not find the file {WHITE}{args.file}")
+            exit(1)
     
     if user_api_call_import == None:
         _print(f"{RED}No function calls were specified. Specify a list of function calls with {WHITE}--apicalls{RED} or the path of a file containing the api calls with {WHITE}--file{RED}.{END}")
@@ -120,30 +129,35 @@ if __name__ == "__main__":
 
     _print(f"Imported {GREEN}{len(user_api_call_import)}{WHITE} function calls{END}")
 
-    hashy_calls = "#pragma once\n#include <windows.h>\n"
+    info_header = f"/*\n\tGenerated with hashycalls script version {SCRIPT_VERSION}. Template version is {TEMPLATE_VERSION}\n\tGenerated with the command line: {' '.join(sys.argv)}"
+    if args.file:
+        info_header += "\n\tImported API Calls:"
+        for function_call in user_api_call_import:
+            info_header += f"\n\t\t - {function_call}"
+    hashy_calls = f"{info_header}\n*/\n#pragma once\n#include <windows.h>\n"
 
     # Set hashing algorithm
-    hash_seed = random.randint(1000, 10000)
     match args.algo:
         case 'djb2':
             hash_algo = djb2
         case 'sdbm':
             hash_algo = sdbm
     _print(f"Using {GREEN}{args.algo.upper()}{WHITE} hashing algorithm")
-    hashy_calls += f"\n#define HASH_SEED {hash_seed}\n"
+    _print(f"Using hash seed {GREEN}{args.seed}")
+    hashy_calls += f"\n#define HASH_SEED {args.seed}\n"
 
     # Internal things required by hashycalls library
     for string in DLL_HASHES:
-        hashy_calls += f"#define {string.split('.')[0].upper()} {hash_algo(hash_seed, string)}\n"
+        hashy_calls += f"#define {string.split('.')[0].upper()} {hash_algo(args.seed, string)}\n"
     for string in STRING_HASHES:
-        hashy_calls += f"#define {string.upper()} {hash_algo(hash_seed, string)}\n"
+        hashy_calls += f"#define {string.upper()} {hash_algo(args.seed, string)}\n"
     for string in INTERNAL_FUNCTIONS:
-        hashy_calls += f"#define {string}_Hash {hash_algo(hash_seed, string)}\n"
+        hashy_calls += f"#define {string}_Hash {hash_algo(args.seed, string)}\n"
     hashy_calls += "\n"
 
     # Create function hash definitions
     for function_call in user_api_call_import:
-        _hash = hash_algo(hash_seed, function_call)
+        _hash = hash_algo(args.seed, function_call)
         hashy_calls += f"#define {function_call}_Hash {_hash}\n"
         _hash = f" -> {_hash}"
         _print(f"Created hash for {GREEN}{function_call}{PURPLE}{_hash.rjust(50 - len(function_call))}{END}")
@@ -196,7 +210,7 @@ if __name__ == "__main__":
         hashed_api_structure = "API_CALL_LIST HashedAPI = {\n"
         for function in user_api_call_import:
             function_info = get_function_info(function)
-            hashed_api_structure += f"\t.{function}.Hash = {hash_algo(hash_seed, function)},\n\t.{function}.ModuleHash = {hash_algo(hash_seed, function_info['dll'])},\n"
+            hashed_api_structure += f"\t.{function}.Hash = {hash_algo(args.seed, function)},\n\t.{function}.ModuleHash = {hash_algo(args.seed, function_info['dll'])},\n"
         hashed_api_structure += "};\n"
         hashy_calls += f"\n{hashed_api_structure}\n"
 
