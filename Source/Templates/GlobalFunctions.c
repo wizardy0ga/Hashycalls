@@ -45,7 +45,7 @@ HMODULE LoadDllFromSystem32ByHash(IN DWORD Hash) {
     LOCATE_KERNEL32_FUNCTION(FindFirstFileA);
     LOCATE_KERNEL32_FUNCTION(FindNextFileA);
 
-    SIZE_T VarSize = GetEnvVarByHash(WINDIR, DirSearchString);
+    SIZE_T VarSize = GetEnvVarByHash(hc_WINDIR, DirSearchString);
     if (VarSize == 0 || VarSize > MAX_PATH)
         return NULL;
     StringConcatA(DirSearchString, "\\*");
@@ -55,7 +55,7 @@ HMODULE LoadDllFromSystem32ByHash(IN DWORD Hash) {
     }
     do
     {
-        if (HashString(FileData.cFileName) == SYSTEM32)
+        if (HashString(FileData.cFileName) == hc_SYSTEM32)
         {
             DirSearchString[StringLengthA(DirSearchString) - 1] = '\0';
             StringConcatA(DirSearchString, FileData.cFileName);

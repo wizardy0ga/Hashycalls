@@ -1,4 +1,4 @@
-    ULONG Hash = HASH_SEED;
+    ULONG Hash = hc_HASH_SEED;
     INT c;
 
     while (c = *String++)

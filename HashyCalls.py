@@ -146,21 +146,21 @@ if __name__ == "__main__":
             hash_algo = sdbm
     _print(f"Using {GREEN}{args.algo.upper()}{WHITE} hashing algorithm")
     _print(f"Using hash seed {GREEN}{args.seed}")
-    hashy_calls += f"\n#define HASH_SEED {args.seed}\n"
+    hashy_calls += f"\n#define hc_HASH_SEED {args.seed}\n"
 
     # Internal things required by hashycalls library
     for string in DLL_HASHES:
-        hashy_calls += f"#define {string.split('.')[0].upper()} {hash_algo(args.seed, string)}\n"
+        hashy_calls += f"#define hc_{string.split('.')[0].upper()} {hash_algo(args.seed, string)}\n"
     for string in STRING_HASHES:
-        hashy_calls += f"#define {string.upper()} {hash_algo(args.seed, string)}\n"
+        hashy_calls += f"#define hc_{string.upper()} {hash_algo(args.seed, string)}\n"
     for string in INTERNAL_FUNCTIONS:
-        hashy_calls += f"#define {string}_Hash {hash_algo(args.seed, string)}\n"
+        hashy_calls += f"#define hc_{string}_Hash {hash_algo(args.seed, string)}\n"
     hashy_calls += "\n"
 
     # Create function hash definitions
     for function_call in user_api_call_import:
         _hash = hash_algo(args.seed, function_call)
-        hashy_calls += f"#define {function_call}_Hash {_hash}\n"
+        hashy_calls += f"#define hc_{function_call}_Hash {_hash}\n"
         _hash = f" -> {_hash}"
         _print(f"Created hash for {GREEN}{function_call}{PURPLE}{_hash.rjust(50 - len(function_call))}{END}")
     hashy_calls += "\n"
