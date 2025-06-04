@@ -10,26 +10,27 @@ SIZE_T GetEnvVarByHash( IN DWORD Hash, OUT PCHAR OutBuffer) {
         if ((StringSize = StringLengthW((LPCWSTR)pEnvironment)) != 0) {
             pTmp = pEnvironment;
             Index = 0;
-            
+
             while (*pTmp != '=') {
                 VarNameBufferW[Index] = *pTmp++;
                 Index++;
             }
             VarNameBufferW[Index] = '\0';
             WCharToChar(VarNameBufferA, (PWCHAR)VarNameBufferW);
-           
+
             if (HashString(VarNameBufferA) == Hash) {
                 WCharToChar(OutBuffer, (PWCHAR)(pEnvironment + Index + sizeof(WCHAR)));
+                hc_dbg("Resolved 0x%0.8X to (%s). Got value (%s).", Hash, VarNameBufferA, OutBuffer);
                 return StringLengthA(OutBuffer);
             }
-            
+
         }
         else {
             break;
         }
         pEnvironment += (StringSize * sizeof(WCHAR)) + sizeof(WCHAR);
     }
-
+    hc_dbg("Could not translate 0x%0.8X to any environment variables", Hash);
     return FALSE;
 }
 
@@ -43,7 +44,7 @@ HMODULE LoadDllFromSystem32ByHash(IN DWORD Hash) {
     LOCATE_KERNEL32_FUNCTION(LoadLibraryA);
     LOCATE_KERNEL32_FUNCTION(FindFirstFileA);
     LOCATE_KERNEL32_FUNCTION(FindNextFileA);
-    
+
     SIZE_T VarSize = GetEnvVarByHash(WINDIR, DirSearchString);
     if (VarSize == 0 || VarSize > MAX_PATH)
         return NULL;
@@ -52,13 +53,13 @@ HMODULE LoadDllFromSystem32ByHash(IN DWORD Hash) {
     if ((hFile = FindFirstFileA_(DirSearchString, &FileData)) == INVALID_HANDLE_VALUE) {
         return NULL;
     }
-    do 
+    do
     {
-        if (HashString(FileData.cFileName) == SYSTEM32) 
+        if (HashString(FileData.cFileName) == SYSTEM32)
         {
             DirSearchString[StringLengthA(DirSearchString) - 1] = '\0';
-            StringConcatA(DirSearchString, FileData.cFileName);         
-            StringConcatA(DirSearchString, "\\*");                      
+            StringConcatA(DirSearchString, FileData.cFileName);
+            StringConcatA(DirSearchString, "\\*");
             System32Found = TRUE;
         }
     } 
@@ -73,23 +74,32 @@ HMODULE LoadDllFromSystem32ByHash(IN DWORD Hash) {
     do {
         ToLower(FileData.cFileName);
         if (HashString(FileData.cFileName) == Hash) {
+            hc_dbg("Resolved 0x%0.8X to %s", Hash, FileData.cFileName);
             return LoadLibraryA_(FileData.cFileName);
         }
     } while (FindNextFileA_(hFile, &FileData) != 0);
 
+    hc_dbg("Could not resolve 0x%0.8X to any dll in system32", Hash);
     return NULL;
 }
 
 BOOL InitApiCalls() {
     PAPI_CALL pApiCall = (PAPI_CALL)&HashedAPI;
+    
+    hc_dbg("Beginning hashed API resolution...");
+    
     if (!(&HashedAPI)->Initialized) {
         for (int i = 0; i < (sizeof(API_CALL_LIST) / sizeof(API_CALL)); i++) {
+            hc_dbg("Resolving function %i of %zu [Function: 0x%0.8X, Dll: 0x%0.8X]", (i + 1), (sizeof(API_CALL_LIST) / sizeof(API_CALL)), pApiCall->Hash, pApiCall->ModuleHash);
             if ((pApiCall->hModule = GetModuleHandleByHash(pApiCall->ModuleHash)) == NULL) {
+                hc_dbg("No module was found. Loading module from c:\\windows\\system32...");
                 if ((pApiCall->hModule = LoadDllFromSystem32ByHash(pApiCall->ModuleHash)) == NULL) {
+                    hc_dbg("Could not find dll file in system32 matching hash 0x%0.8X", pApiCall->ModuleHash);
                     return FALSE;
                 }
             }
             if ((pApiCall->Address = GetProcAddressByHash(pApiCall->hModule, pApiCall->Hash)) == NULL) {
+                hc_dbg("Could not find a function address for the hash 0x%0.8X", pApiCall->Hash);
                 return FALSE;
             }
             (ULONG_PTR)pApiCall += sizeof(API_CALL);
