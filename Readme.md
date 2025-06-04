@@ -241,6 +241,7 @@ int main() {
 ## Credits
 
 - [reverseame](https://github.com/reverseame) for their windows api data set. It has been very useful. Can't thank them enough.
+- [vx-underground](https://github.com/vxunderground) for the [vx-api](https://github.com/vxunderground/VX-API)!
 
 ## Change Log
 
