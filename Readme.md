@@ -110,6 +110,10 @@ The argument `-ga` will produce a template which contains the code for creating 
 When using the base template, the developer can use the LOCATE* function macros to resolve the api calls within the block of code. At this time, the developer is restricted to functions in either ntdll, kernelbase or kernel32. This is subject to change in a future update.
 
 ```C
+/*
+To generate hashycalls.h header file for this example, run the command
+	hashycalls.py --apicalls VirtualAlloc CreateRemoteThread WriteProcessMemory WaitForSingleObject
+*/
 #include "hashycalls.h"
 #include <stdio.h>
 
@@ -175,6 +179,10 @@ When using the global template, the developer must call the **initApiCalls()** f
 To access these functions, the developer can call the **GET_FUNCTION_CALL** macro which resolves the function hash into an address found in the structure.
 
 ```C
+/*
+To generate hashycalls.h header file for this example, run the command
+	hashycalls.py --apicalls VirtualAlloc CreateRemoteThread WriteProcessMemory WaitForSingleObject -ga
+*/
 #include "hashycalls.h"
 #include <stdio.h>
 
