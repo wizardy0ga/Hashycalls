@@ -100729,7 +100729,7 @@
             }
         ]
     },
-    "InternetOpen": {
+    "InternetOpenW": {
         "category": "Windows Internet (WinINet)",
         "dll": "Wininet.dll",
         "header": "Wininet.h",
@@ -100738,7 +100738,7 @@
         "arguments": [
             {
                 "in_out": "_In_",
-                "type": "LPCTSTR",
+                "type": "LPCWSTR",
                 "name": "lpszAgent",
                 "description": "Pointer to a null-terminated string  that specifies the name of the application or entity calling the WinINet functions. This name is used as the user agent in the HTTP protocol."
             },
@@ -100750,13 +100750,52 @@
             },
             {
                 "in_out": "_In_",
-                "type": "LPCTSTR",
-                "name": "lpszProxyName",
+                "type": "LPCWSTR",
+                "name": "lpszProxy",
                 "description": "Pointer to a null-terminated string  that specifies the name of the proxy server(s) to use when proxy access is specified by setting  dwAccessType to  INTERNET_OPEN_TYPE_PROXY. Do not use an empty string, because  InternetOpen will use it as the proxy name. The WinINet functions recognize only CERN type proxies (HTTP only) and the TIS FTP gateway (FTP only). If Microsoft Internet Explorer is installed, these functions also support SOCKS proxies. FTP requests can be made through a CERN type proxy either by changing them to an HTTP request or by using  InternetOpenUrl. If  dwAccessType is not set to  INTERNET_OPEN_TYPE_PROXY, this parameter is ignored and should be NULL. For more information about listing proxy servers, see the  Listing Proxy Servers section of  Enabling Internet Functionality."
             },
             {
                 "in_out": "_In_",
-                "type": "LPCTSTR",
+                "type": "LPCWSTR",
+                "name": "lpszProxyBypass",
+                "description": "Pointer to a null-terminated string  that specifies an optional list of host names or IP addresses, or both, that should not be routed through the proxy when  dwAccessType is set to  INTERNET_OPEN_TYPE_PROXY. The list can contain wildcards. Do not use an empty string, because  InternetOpen will use it as the proxy bypass list. If this parameter specifies the \"<local>\" macro, the function bypasses the proxy for any host name that does not contain a period.  By default, WinINet will bypass the proxy for requests that use the host names \"localhost\", \"loopback\", \"127.0.0.1\", or \"[::1]\". This behavior exists because a remote proxy server typically will not resolve these addresses properly.Internet Explorer 9:  You can remove the local computer from the proxy bypass list using the \"<-loopback>\" macro. If  dwAccessType is not set to  INTERNET_OPEN_TYPE_PROXY, this parameter is ignored and should be NULL."
+            },
+            {
+                "in_out": "_In_",
+                "type": "DWORD",
+                "name": "dwFlags",
+                "description": "Options. This parameter can be a combination of the following values.  ValueMeaning   INTERNET_FLAG_ASYNC   Makes only asynchronous requests on handles descended from the handle returned from this function.    INTERNET_FLAG_FROM_CACHE   Does not make network requests. All entities are returned from the cache. If the requested item is not in the cache, a suitable error, such as ERROR_FILE_NOT_FOUND, is returned.    INTERNET_FLAG_OFFLINE   Identical to  INTERNET_FLAG_FROM_CACHE. Does not make network requests. All entities are returned from the cache. If the requested item is not in the cache, a suitable error, such as ERROR_FILE_NOT_FOUND, is returned."
+            }
+        ]
+    },
+    "InternetOpenA": {
+        "category": "Windows Internet (WinINet)",
+        "dll": "Wininet.dll",
+        "header": "Wininet.h",
+        "return_type": "HINTERNET",
+        "n_arguments": 5,
+        "arguments": [
+            {
+                "in_out": "_In_",
+                "type": "LPCSTR",
+                "name": "lpszAgent",
+                "description": "Pointer to a null-terminated string  that specifies the name of the application or entity calling the WinINet functions. This name is used as the user agent in the HTTP protocol."
+            },
+            {
+                "in_out": "_In_",
+                "type": "DWORD",
+                "name": "dwAccessType",
+                "description": "Type of access required. This parameter can be one of the following values.  ValueMeaning   INTERNET_OPEN_TYPE_DIRECT   Resolves all host names locally.    INTERNET_OPEN_TYPE_PRECONFIG   Retrieves the proxy or direct configuration from the registry.    INTERNET_OPEN_TYPE_PRECONFIG_WITH_NO_AUTOPROXY   Retrieves the proxy or direct configuration from the registry and prevents the use of a startup Microsoft JScript or Internet Setup (INS) file.    INTERNET_OPEN_TYPE_PROXY   Passes requests to the proxy unless a proxy bypass list is supplied and the name to be resolved bypasses the proxy. In this case, the function uses  INTERNET_OPEN_TYPE_DIRECT."
+            },
+            {
+                "in_out": "_In_",
+                "type": "LPCSTR",
+                "name": "lpszProxy",
+                "description": "Pointer to a null-terminated string  that specifies the name of the proxy server(s) to use when proxy access is specified by setting  dwAccessType to  INTERNET_OPEN_TYPE_PROXY. Do not use an empty string, because  InternetOpen will use it as the proxy name. The WinINet functions recognize only CERN type proxies (HTTP only) and the TIS FTP gateway (FTP only). If Microsoft Internet Explorer is installed, these functions also support SOCKS proxies. FTP requests can be made through a CERN type proxy either by changing them to an HTTP request or by using  InternetOpenUrl. If  dwAccessType is not set to  INTERNET_OPEN_TYPE_PROXY, this parameter is ignored and should be NULL. For more information about listing proxy servers, see the  Listing Proxy Servers section of  Enabling Internet Functionality."
+            },
+            {
+                "in_out": "_In_",
+                "type": "LPCSTR",
                 "name": "lpszProxyBypass",
                 "description": "Pointer to a null-terminated string  that specifies an optional list of host names or IP addresses, or both, that should not be routed through the proxy when  dwAccessType is set to  INTERNET_OPEN_TYPE_PROXY. The list can contain wildcards. Do not use an empty string, because  InternetOpen will use it as the proxy bypass list. If this parameter specifies the \"<local>\" macro, the function bypasses the proxy for any host name that does not contain a period.  By default, WinINet will bypass the proxy for requests that use the host names \"localhost\", \"loopback\", \"127.0.0.1\", or \"[::1]\". This behavior exists because a remote proxy server typically will not resolve these addresses properly.Internet Explorer 9:  You can remove the local computer from the proxy bypass list using the \"<-loopback>\" macro. If  dwAccessType is not set to  INTERNET_OPEN_TYPE_PROXY, this parameter is ignored and should be NULL."
             },
