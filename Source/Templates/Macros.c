@@ -1,10 +1,10 @@
-# define LOCATE_KERNEL32_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_KERNEL32), ApiCallName##_Hash); \
+# define LOCATE_KERNEL32_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_KERNEL32), hc_##ApiCallName##_Hash); \
 if (!ApiCallName##_) { return FALSE; }\
 
-# define LOCATE_KERNELBASE_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_KERNELBASE), ApiCallName##_Hash); \
+# define LOCATE_KERNELBASE_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_KERNELBASE), hc_##ApiCallName##_Hash); \
 if (!ApiCallName##_) { return FALSE; }\
 
-# define LOCATE_NTDLL_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_NTDLL), ApiCallName##_Hash); \
+# define LOCATE_NTDLL_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_NTDLL), hc_##ApiCallName##_Hash); \
 if (!ApiCallName##_) { return FALSE; }\
 
 /* Temporarily disabled pending future update to base template */
