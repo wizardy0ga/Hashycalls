@@ -214461,8 +214461,8 @@
     },
     "CreateToolhelp32Snapshot": {
         "category": "Processes",
-        "dll": "",
-        "header": "",
+        "dll": "Kernel32.dll",
+        "header": "tlhelp32.h",
         "return_type": "HANDLE",
         "n_arguments": 2,
         "arguments": [
@@ -214474,7 +214474,7 @@
             {
                 "in_out": "__in",
                 "type": "DWORD",
-                "name": "th32ProcessIDCopyright"
+                "name": "th32ProcessID"
             }
         ]
     },
