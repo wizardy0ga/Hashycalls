@@ -4,8 +4,8 @@ import json
 import sys
 import os
 
-SCRIPT_VERSION = "1.2.0"
-TEMPLATE_VERSION = "1.0.0"
+SCRIPT_VERSION = "1.3.0"
+TEMPLATE_VERSION = "1.1.0"
 
 GREEN = "\033[1;32m"
 PURPLE = "\033[1;35m"
@@ -120,7 +120,6 @@ if __name__ == "__main__":
         if function in INTERNAL_FUNCTIONS:
             user_api_call_import.remove(function)
             _print(f"{GREEN}{function}{WHITE} function is included by default. Omitting.")
-    #[user_api_call_import.remove(function) for function in user_api_call_import if function in INTERNAL_FUNCTIONS]
 
     for function in user_api_call_import:
         if function not in WINDOWS_API_INFO.keys():
@@ -135,6 +134,9 @@ if __name__ == "__main__":
         for function_call in user_api_call_import:
             info_header += f"\n\t\t - {function_call}"
     hashy_calls = f"{info_header}\n*/\n#pragma once\n#include <windows.h>\n"
+
+    with open('source/templates/debug.c') as file:
+        hashy_calls += file.read()
 
     # Set hashing algorithm
     match args.algo:
