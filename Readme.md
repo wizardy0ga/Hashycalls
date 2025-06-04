@@ -245,9 +245,20 @@ int main() {
 
 ## Change Log
 
-| Date | Component | Version | Comment |
-| - | - | - | - |
-| March 25th 2025 | Script | 1.1.0 | Added stdout for instances where a default api call was specified at the command line |
-| April 7th 2025 | Script | 1.2.0 | <ul><li>Added an argument for hash seed</li><li>Added script, template & command line info to source code comment header.</li><li>Resolved an issue with default hash of 'System32' for use in LoadDllFromSystem32ByHash function directory searching. The hash was using 'system32' instead of the default 'System32' which broke the function.</li><li>Added error handling for instances where an invalid file path is given to --file</ul> |
-| June 3rd 2025 | Script | 1.3.0 | Added support for debug statements into header file build code
-| June 3rd 2025 | Template | 1.1.0 | Added debug statements throughout the code
+### Script
+
+Changes referenced here relate to [hashycalls.py](HashyCalls.py) functionality.
+
+| Date | Version | Comment |
+| - | - | - |
+| March 25th 2025 | 1.1.0 | Added stdout for instances where a default api call was specified at the command line |
+| April 7th 2025 | 1.2.0 | <ul><li>Added an argument for hash seed</li><li>Added script, template & command line info to source code comment header.</li><li>Resolved an issue with default hash of 'System32' for use in LoadDllFromSystem32ByHash function directory searching. The hash was using 'system32' instead of the default 'System32' which broke the function.</li><li>Added error handling for instances where an invalid file path is given to --file</ul> |
+| June 3rd 2025 | 1.3.0 | Added support for debug statements & unique macro names into header file build code
+
+### Template
+
+Changes referenced here relate to the API resolution code template that's built by hashycalls.py. This is based on the [HashyCallsOriginal.h](Source/Header/HashyCallsOriginal.h) file.
+
+| Date | Version | Comment |
+| - | - | - |
+| June 3rd 2025 | 1.1.0 | <ul><li>Added debug statements throughout the code.</li><li>Prefixed some macros with 'hc_' to prevent naming conflicts with other tools</li></ul>
