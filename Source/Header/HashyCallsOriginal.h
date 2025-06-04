@@ -4,7 +4,7 @@
 # define GLOBAL_ARCHITECTURE
 # define hc_DEBUG
 
-# define SEED_HASH 8888
+# define hc_SEED_HASH 8888
 
 # ifdef hc_DEBUG
 # include <stdio.h>
@@ -21,11 +21,11 @@
 # define hc_KERNELBASE      0xF6D4FD9C         // kernelbase.dll
 
 /* Internal function hashes */
-# define LoadLibraryA_Hash              0xF4DAB6A4    // LoadLibraryA
-# define FindFirstFileA_Hash            0x4CE39F26    // FindFirstFileA
-# define FindNextFileA_Hash             0xEF6B1DC1    // FindNextFileA
-# define NtAllocateVirtualMemory_Hash   0x882B79D1
-# define AddRefActCtx_Hash              0x28CE98FF
+# define hc_LoadLibraryA_Hash              0xF4DAB6A4    // LoadLibraryA
+# define hc_FindFirstFileA_Hash            0x4CE39F26    // FindFirstFileA
+# define hc_FindNextFileA_Hash             0xEF6B1DC1    // FindNextFileA
+# define hc_NtAllocateVirtualMemory_Hash   0x882B79D1
+# define hc_AddRefActCtx_Hash              0x28CE98FF
 
 typedef NTSTATUS(NTAPI* fpNtAllocateVirtualMemory)(
     HANDLE    ProcessHandle,
@@ -43,23 +43,23 @@ typedef void(WINAPI* fpAddRefActCtx)(
 typedef int(WINAPI* fpMessageBoxA)(HWND hWnd, LPCSTR lpText, LPCSTR lpCaption, UINT uType);
 
 /* Hashed strings */
-# define WINDIR 0xFCB19529           // windir
-# define SYSTEM32 0x8CDECC66         // system32
+# define hc_WINDIR 0xFCB19529           // windir
+# define hc_SYSTEM32 0x8CDECC66         // system32
 
 /* testing */
-# define SH_CHANGE_NOTIFY_REGISTER 0x7D8FCBE9
+# define hc_SH_CHANGE_NOTIFY_REGISTER 0x7D8FCBE9
 # define hc_SHELL32 0xE2D33CAD
 
-# define LOCATE_KERNEL32_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_KERNEL32), ApiCallName##_Hash); \
+# define LOCATE_KERNEL32_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_KERNEL32), hc_##ApiCallName##_Hash); \
 if (!ApiCallName##_) { return FALSE; }\
 
-# define LOCATE_KERNELBASE_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_KERNELBASE), ApiCallName##_Hash); \
+# define LOCATE_KERNELBASE_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_KERNELBASE), hc_##ApiCallName##_Hash); \
 if (!ApiCallName##_) { return FALSE; }\
 
-# define LOCATE_NTDLL_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_NTDLL), ApiCallName##_Hash); \
+# define LOCATE_NTDLL_FUNCTION(ApiCallName) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(hc_NTDLL), hc_##ApiCallName##_Hash); \
 if (!ApiCallName##_) { return FALSE; }\
 
-# define LOCATE_FUNCTION(ApiCallName, ModuleHash) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(ModuleHash), ApiCallName##_Hash); \
+# define LOCATE_FUNCTION(ApiCallName, ModuleHash) fp##ApiCallName ApiCallName##_ = (fp##ApiCallName)GetProcAddressByHash(GetModuleHandleByHash(ModuleHash), hc_##ApiCallName##_Hash); \
 if (!ApiCallName##_) { return FALSE; }\
 
 
@@ -189,7 +189,7 @@ VOID ToLower(PCHAR String) {
 }
 
 DWORD HashString(PCHAR String) {
-    ULONG Hash = SEED_HASH;
+    ULONG Hash = hc_SEED_HASH;
     INT c;
 
     while (c = *String++)
@@ -343,7 +343,7 @@ API_CALL_LIST HashedAPI = {
     .VirtualAlloc.ModuleHash = hc_KERNEL32,
     .VirtualProtect.Hash = 0x9F90E99C,
     .VirtualProtect.ModuleHash = hc_KERNEL32,
-    .SHChangeNotifyRegister.Hash = SH_CHANGE_NOTIFY_REGISTER,
+    .SHChangeNotifyRegister.Hash = hc_SH_CHANGE_NOTIFY_REGISTER,
     .SHChangeNotifyRegister.ModuleHash = hc_SHELL32,
     .BaseRegFlushKey.ModuleHash = 0x47CF92D4,
     .BaseRegFlushKey.Hash = 0x4EAB0266
@@ -414,7 +414,7 @@ HMODULE LoadDllFromSystem32ByHash(IN DWORD Hash) {
     LOCATE_KERNEL32_FUNCTION(FindNextFileA);
 
     /* Create the search string c:\windows\* */
-    SIZE_T VarSize = GetEnvVarByHash(WINDIR, DirSearchString);
+    SIZE_T VarSize = GetEnvVarByHash(hc_WINDIR, DirSearchString);
     if (VarSize == 0 || VarSize > MAX_PATH)
         return NULL;
     StringConcatA(DirSearchString, "\\*");
@@ -425,7 +425,7 @@ HMODULE LoadDllFromSystem32ByHash(IN DWORD Hash) {
     }
     do
     {
-        if (HashString(FileData.cFileName) == SYSTEM32)
+        if (HashString(FileData.cFileName) == hc_SYSTEM32)
         {
             DirSearchString[StringLengthA(DirSearchString) - 1] = '\0'; /* C:\Windows\* -> C:\Windows */
             StringConcatA(DirSearchString, FileData.cFileName);         /* C:\Windows\System32        */
