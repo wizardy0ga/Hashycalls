@@ -20,8 +20,8 @@ Each header file generated will have randomized hashes generated for each functi
 ### Version Table
 | Component | Version |
 | - | - |
-| Script | 1.2.0 |
-| C Template | 1.0.0 | 
+| Script | 1.3.0 |
+| C Template | 1.1.0 | 
 
 ## Usage
 
@@ -85,6 +85,7 @@ The global template provides all of the code in the base template with additiona
 | LOCATE_KERNEL32_FUNCTION(ApiCallName) | Locate a function in kernel32
 | LOCATE_KERNELBASE_FUNCTION(ApiCallName) | Locate a function in kernelbase
 | LOCATE_NTDLL_FUNCTION(ApiCallName) | Locate a function in ntdll
+| hc_dbg | Run a debug statement from the context of hashycalls
 
 The macros are designed to accept the name of the function to resolve. The macro will return the function variable with an underscore prepended -> LOCATE_KERNEL32_FUNCTION(VirtualAlloc) would return the VirtualAlloc function in the variable **VirtualAlloc_**. These functions are intended to reduce repitition between GetProcAddressByHash & GetModuleAddressByHash usage. 
 
@@ -247,3 +248,5 @@ int main() {
 | - | - | - | - |
 | March 25th 2025 | Script | 1.1.0 | Added stdout for instances where a default api call was specified at the command line |
 | April 7th 2025 | Script | 1.2.0 | <ul><li>Added an argument for hash seed</li><li>Added script, template & command line info to source code comment header.</li><li>Resolved an issue with default hash of 'System32' for use in LoadDllFromSystem32ByHash function directory searching. The hash was using 'system32' instead of the default 'System32' which broke the function.</li><li>Added error handling for instances where an invalid file path is given to --file</ul> |
+| June 3rd 2025 | Script | 1.3.0 | Added support for debug statements into header file build code
+| June 3rd 2025 | Template | 1.1.0 | Added debug statements throughout the code
