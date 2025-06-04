@@ -63794,6 +63794,27 @@
             }
         ]
     },
+    "Process32FirstW": {
+        "category": "Processes",
+        "dll": "Kernel32.dll",
+        "header": "TlHelp32.h",
+        "return_type": "BOOL",
+        "n_arguments": 2,
+        "arguments": [
+            {
+                "in_out": "_In_",
+                "type": "HANDLE",
+                "name": "hSnapshot",
+                "description": "A handle to the snapshot returned from a previous call to the  CreateToolhelp32Snapshot function."
+            },
+            {
+                "in_out": "_Inout_",
+                "type": "LPPROCESSENTRY32W",
+                "name": "lppe",
+                "description": "A pointer to a  PROCESSENTRY32 structure. It contains process information such as the name of the executable file, the process identifier, and the process identifier of the parent process."
+            }
+        ]
+    },
     "Process32Next": {
         "category": "Processes",
         "dll": "Kernel32.dll",
@@ -63810,6 +63831,27 @@
             {
                 "in_out": "_Out_",
                 "type": "LPPROCESSENTRY32",
+                "name": "lppe",
+                "description": "A pointer to a  PROCESSENTRY32 structure."
+            }
+        ]
+    },
+    "Process32NextW": {
+        "category": "Processes",
+        "dll": "Kernel32.dll",
+        "header": "TlHelp32.h",
+        "return_type": "BOOL",
+        "n_arguments": 2,
+        "arguments": [
+            {
+                "in_out": "_In_",
+                "type": "HANDLE",
+                "name": "hSnapshot",
+                "description": "A handle to the snapshot returned from a previous call to the  CreateToolhelp32Snapshot function."
+            },
+            {
+                "in_out": "_Out_",
+                "type": "LPPROCESSENTRY32W",
                 "name": "lppe",
                 "description": "A pointer to a  PROCESSENTRY32 structure."
             }
