@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{7b088a69-5c26-43d5-af59-7e1cb8389306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header">
+      <UniqueIdentifier>{b8e60179-e797-4769-b45a-b1cb0fb256c7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\hashycalls.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\hashycalls.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
