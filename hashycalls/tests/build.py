@@ -4,12 +4,12 @@ from hashycalls import HashyCalls
 
 # Create hashycalls source object
 hashysource = HashyCalls(
-    apicalls = ['OpenProcess', 'VirtualAllocEx', 'WriteProcessMemory', 'CreateRemoteThread']
-    , globals = True
+    apicalls        = ['OpenProcess', 'VirtualAllocEx', 'WriteProcessMemory', 'CreateRemoteThread']
+    , globals       = True
     , api_list_name = 'hWin32'
-    , algo = 'djb2'
-    , seed  = 1000
-    , debug = True
+    , algo          = 'djb2'
+    , seed          = 1000
+    , debug         = True
 )
 
 # Write source code to directory
