@@ -8,12 +8,13 @@ build-backend   = "hatchling.build"
 # Set module metadata
 [project]
 name        = "hashycalls"
+readme      = "README.md"
 version     = "2.0.0"
 description = "An Import Address Table obfuscation utility for C/C++ based windows implants"
 author      = [ 
     {name="wizardy0ga"} 
 ]
-
+requires-python = ">=3.10"
 # Create 'hashycalls' command pointing at main function
 [project.scripts]
 hashycalls = "hashycalls.cli:main"
@@ -28,5 +29,6 @@ include = [
     "hashycalls/rsrc/code/solution file/src/*",
     "hashycalls/rsrc/code/solution file/proj/hashycalls.*",
     "hashycalls/rsrc/code/solution file/.editorconfig",
-    "hashycalls/rsrc/code/solution file/hashycalls.sln"
+    "hashycalls/rsrc/code/solution file/hashycalls.sln",
+    "hashycalls/README.md"
 ]
