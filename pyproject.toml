@@ -1,0 +1,32 @@
+# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+
+# Define the build system
+[build-system]
+requires        = ["hatchling"]
+build-backend   = "hatchling.build"
+
+# Set module metadata
+[project]
+name        = "hashycalls"
+version     = "2.0.0"
+description = "An Import Address Table obfuscation utility for C/C++ based windows implants"
+author      = [ 
+    {name="wizardy0ga"} 
+]
+
+# Create 'hashycalls' command pointing at main function
+[project.scripts]
+hashycalls = "hashycalls.cli:main"
+
+# Define files to include in the wheel & source distributions. These are the final files
+# to be included in the code base.
+[tool.hatch.build]
+include = [ 
+    "hashycalls/*.py",
+    "hashycalls/rsrc/data/winapi.json",
+    "hashycalls/rsrc/code/templates/*",
+    "hashycalls/rsrc/code/solution file/src/*",
+    "hashycalls/rsrc/code/solution file/proj/hashycalls.*",
+    "hashycalls/rsrc/code/solution file/.editorconfig",
+    "hashycalls/rsrc/code/solution file/hashycalls.sln"
+]
