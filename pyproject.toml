@@ -1,4 +1,5 @@
 # https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+# https://hatch.pypa.io/1.9/config/build/
 
 # Define the build system
 [build-system]
@@ -22,13 +23,17 @@ hashycalls = "hashycalls.cli:main"
 # Define files to include in the wheel & source distributions. These are the final files
 # to be included in the code base.
 [tool.hatch.build]
+sources = [
+    "src"   # Must define sources as array with prefix to remove from include paths otherwise incur import
+            # crashes due to path issues
+]
 include = [ 
-    "hashycalls/*.py",
-    "hashycalls/rsrc/data/winapi.json",
-    "hashycalls/rsrc/code/templates/*",
-    "hashycalls/rsrc/code/solution file/src/*",
-    "hashycalls/rsrc/code/solution file/proj/hashycalls.*",
-    "hashycalls/rsrc/code/solution file/.editorconfig",
-    "hashycalls/rsrc/code/solution file/hashycalls.sln",
-    "hashycalls/README.md"
+    "src/hashycalls/*.py",
+    "src/hashycalls/rsrc/data/winapi.json",
+    "src/hashycalls/rsrc/code/templates/*",
+    "src/hashycalls/rsrc/code/solution file/src/*",
+    "src/hashycalls/rsrc/code/solution file/proj/hashycalls.*",
+    "src/hashycalls/rsrc/code/solution file/.editorconfig",
+    "src/hashycalls/rsrc/code/solution file/hashycalls.sln",
+    "src/hashycalls/README.md"
 ]
