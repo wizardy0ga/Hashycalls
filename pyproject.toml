@@ -24,12 +24,12 @@ hashycalls = "hashycalls.cli:main"
 # to be included in the code base.
 [tool.hatch.build]
 sources = [
-    "src"   # Must define sources as array with prefix to remove from include paths otherwise incur import
-            # crashes due to path issues
+    "src"   # Must define sources as array with prefix to remove from include paths otherwise incur import crashes due to path issues
 ]
+
 include = [ 
     "src/hashycalls/*.py",
-    "src/hashycalls/rsrc/data/winapi.json",
+    "src/hashycalls/rsrc/data/*",
     "src/hashycalls/rsrc/code/templates/*",
     "src/hashycalls/rsrc/code/solution file/src/*",
     "src/hashycalls/rsrc/code/solution file/proj/hashycalls.*",
