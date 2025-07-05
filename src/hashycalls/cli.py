@@ -1,19 +1,17 @@
 import os
 import uuid
+from hashycalls.colors import *
 from hashycalls.core import *
 from hashycalls.args import parse_user_args
 
-# ----------------- Private Functions ------------------
-def print_dict_table( dictionary: dict ) -> None:
-    """ Internal function to print banner and configuration"""
-
-    # Determine amount of minimum space required 
+def print_banner( key_width: int, val_width: int ) -> None:
+    """ Print the hashycalls banner """
+    # Determine amount of minimum space required for the banner
     banner_top = "_  _ ____ ____ _  _ _   _    ____ ____ _    _    ____"
-    key_width  = max( len( str( key ) ) for key in dictionary ) + 1
-    val_width  = max( len( str( val ) ) for val in dictionary.values() ) + 2
     if ( key_width + val_width ) < len( banner_top ):
         val_width = ( ( len( banner_top ) - key_width ) + 2 )
 
+    # print it
     print( f"{ RED }╔{ '═' * ( key_width + val_width + 4) }╗" )
     print( f"║{ WHITE }{ banner_top.center( val_width + key_width + 4, ' ' ) }{ RED }║")
     print( f"║{ WHITE }{'|__| |__| [__  |__|  \\_/  __ |    |__| |    |    [__'.center( val_width + key_width + 2, ' ' ) }  { RED }║")
@@ -23,6 +21,85 @@ def print_dict_table( dictionary: dict ) -> None:
     print( f"║{ 'Coded By: Wizardy0ga'.center( val_width + key_width + 4 ) }║")
     print( f"║{ f'Script Version: { SCRIPT_VERSION } | Template Version: { TEMPLATE_VERSION }'.center( key_width + val_width + 4 ) }║")
     print( f"║{' '.center( key_width + val_width + 4, ' ' ) }{ RED }║")
+
+def _format_args( action, default_metavar: str) -> str:
+    """ 
+    Format an arguments syntax. Taken from argparse.HelpFormatter class. This is a combination of the 
+    the _format_args & _metavar_formatter() methods fo the HelpFormatter class.
+    """ 
+    if action.metavar is not None:
+        metavar = action.metavar
+    elif action.choices is not None:
+        metavar = '{%s}' % ','.join(map(str, action.choices))
+    else:
+        metavar = default_metavar
+    if action.nargs is None:
+        result = '%s' % metavar
+    elif action.nargs == '?':  # OPTIONAL:
+        result = '[%s]' % metavar
+    elif action.nargs == '*':  # ZERO_OR_MORE:
+        metavar = metavar
+        if len(metavar) == 2:
+            result = '[%s [%s ...]]' % metavar
+        else:
+            result = '[%s ...]' % metavar
+    elif action.nargs == '+':   # ONE_OR_MORE:
+        result = '%s [%s ...]' % (metavar, metavar)
+    elif action.nargs == '...': # REMAINDER:
+        result = '...'
+    elif action.nargs == 'A...': # PARSER:
+        result = '%s ...' % metavar
+    elif action.nargs == '==SUPPRESS==': # SUPPRESS:
+        result = ''
+    else:
+        result = ''
+    return result
+
+def print_help( parser ):
+    """ Prints a table using the arguments stored in an argparse.ArgumentParser object as a table"""
+    max_key_width   = 0
+    max_val_width   = 0
+    args            = {}
+    # Collect argument group, variable name & help inforamation. Get the max lengths
+    # of each string in form -> '-a, --algo this is the description'
+    for argument_group in parser._action_groups:
+        if argument_group._group_actions:
+            if argument_group.title == 'options':
+                setattr( argument_group, 'title', 'Module Options' )
+            args[ argument_group.title ] = []
+            for argument, index in zip(argument_group._group_actions, range( 0, len( argument_group._group_actions ) ) ):
+                args[ argument_group.title ] += [{ 'key': f'{ ', '.join( argument.option_strings ) } { _format_args(argument, argument.dest.upper()) }', 'value': argument.help }]
+                key_width = len( args[ argument_group.title ][index]['key'] ) + 4
+                val_width = len( args[ argument_group.title ][index]['value'] ) + 4
+                max_key_width = key_width if key_width > max_key_width else max_key_width
+                max_val_width = val_width if val_width > max_val_width else max_val_width
+
+    # Begin building the table string
+    max_width = max_key_width + max_val_width
+    table = f"╠{ '═' * max_width }╣\n"
+    for argument_group, arguments in args.items():
+        table += f'║{ GREEN }{ argument_group.center(max_width, ' ') }{RED}║\n'
+        table += f'╠{ '═' * (max_key_width) }╦{ '═' * (max_val_width - 1) }╣\n'
+        for argument in arguments:
+            table += f'║ { WHITE }{ argument['key'].ljust( max_key_width - 1)}{ RED }║ { YELLOW }{ argument['value'].ljust( max_val_width - 2 ) }{ RED }║\n'
+            if argument_group == list(args.keys())[-1] and argument == arguments[-1]:
+                table += f'╚{ '═' * max_key_width }╩{ '═' * (max_val_width - 1) }╝'
+            elif argument == arguments[-1]:
+                table += f'╠{ '═' * (max_key_width)}╩{ '═' * (max_val_width - 1) }╣\n'
+            else:
+                table += f'╠{ '═' * (max_key_width)}╬{ '═' * (max_val_width - 1) }╣\n'
+    
+    print_banner( max_key_width -2, max_val_width - 2 )
+    print( table + END )
+
+# ----------------- Private Functions ------------------
+def print_config( dictionary: dict ) -> None:
+    """ Prints argument configuration & banner """
+    banner_top = "_  _ ____ ____ _  _ _   _    ____ ____ _    _    ____"
+    key_width  = max( len( str( key ) ) for key in dictionary ) + 1
+    val_width  = max( len( str( val ) ) for val in dictionary.values() ) + 2
+
+    print_banner( key_width, val_width )
 
     # Create sections of the config
     top         = f"{ RED }╠{ '═' * ( key_width + 1 ) }╦{ '═' * ( val_width + 2) }╣"
@@ -47,9 +124,13 @@ def hc_print( msg: str ) -> None:
 
 # ---------------------------- Entry -----------------------
 def main():
-    args = parse_user_args()
+    parser  = parse_user_args()
+    args    = parser.parse_args()
 
-    # --------------------- Entry ----------------------
+    if args.help:
+        print_help( parser )
+        exit()
+
     if args.version:
         hc_print(f' Module:   { SCRIPT_VERSION }\n\tTemplate: { TEMPLATE_VERSION }')
         exit()
@@ -82,34 +163,40 @@ def main():
         hc_print(f'{ RED }hashycalls initialization failed with error: { END }{ e }')
         exit()
 
-    # Print config
-    args_dict = vars( args )
-    for arg in [ 'apicalls', 'file' ]:
-        del args_dict[ arg ]
-    print_dict_table( args_dict )
+    try:
 
-    hc_print( f"Imported { len( hashycalls.header.api_call_list.apicalls ) } functions:" )
-    for function in hashycalls.header.api_call_list.apicalls:
-        print( f"\t{ GREEN }+ { WHITE }{ function.name } { END }" )
+        # Print config
+        if not args.quiet:
+            args_dict = vars( args )
+            for arg in [ 'apicalls', 'file' ]:
+                del args_dict[ arg ]
+            print_config( args_dict )
 
-    # Remove comments
-    if args.remove_comments:
-        [ file.remove_comments() for file in [ hashycalls.header, hashycalls.source ] ]
-        hc_print( "Removed comments from source code" )
+        hc_print( f"Imported { len( hashycalls.header.api_call_list.apicalls ) } functions:" )
+        for function in hashycalls.header.api_call_list.apicalls:
+            print( f"\t{ GREEN }+ { WHITE }{ function.name } { END }" )
 
-    # Cleanup new lines
-    for file in [ hashycalls.header, hashycalls.source ]:
-        file.remove_blank_lines()
+        # Remove comments
+        if args.remove_comments:
+            [ file.remove_comments() for file in [ hashycalls.header, hashycalls.source ] ]
+            hc_print( "Removed comments from source code" )
 
-    # Insert header to file
-    build_id = str( uuid.uuid4() )
-    hc_print( f"Assigned id { WHITE }{ build_id }{ YELLOW } to this build" )
-    for file in [ hashycalls.header, hashycalls.source ]:
-        file.insert_header( additional_content = f'ID: { build_id }\nUsing function calls:\n\t[+] - { '\n\t[+] - '.join( user_api_call_imports ) }' )
+        # Cleanup new lines
+        for file in [ hashycalls.header, hashycalls.source ]:
+            file.remove_blank_lines()
 
-    # Write files to disk
-    hashycalls.header.write_to_dir( output_directory )
-    hashycalls.source.write_to_dir( output_directory )
+        # Insert header to file
+        build_id = str( uuid.uuid4() )
+        hc_print( f"Assigned id { WHITE }{ build_id }{ YELLOW } to this build" )
+        for file in [ hashycalls.header, hashycalls.source ]:
+            file.insert_header( additional_content = f'ID: { build_id }\nUsing function calls:\n\t[+] - { '\n\t[+] - '.join( user_api_call_imports ) }' )
 
-    for file in [ hashycalls.header, hashycalls.source ]:
-        hc_print( f"Wrote { WHITE }{ file.filename }{ YELLOW } to { WHITE }{ file.path_on_disk }" )
+        # Write files to disk
+        hashycalls.header.write_to_dir( output_directory )
+        hashycalls.source.write_to_dir( output_directory )
+
+        for file in [ hashycalls.header, hashycalls.source ]:
+            hc_print( f"Wrote { WHITE }{ file.filename }{ YELLOW } to { WHITE }{ file.path_on_disk }" )
+    
+    except Exception as e:
+        hc_print(f"An unexpected error occurred. -> { e }")
