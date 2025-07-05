@@ -2,6 +2,7 @@ import os
 import random
 import argparse
 
+
 # -------------------------- Private Functions --------------------------
 def dir_exists( path: str ) -> str:
     """ Validate directory existence for arguments """
@@ -9,16 +10,18 @@ def dir_exists( path: str ) -> str:
         raise argparse.ArgumentTypeError( f"The directory '{ path }' does not exist." )
     return path
 
+
 def file_exists( path:str ) -> str:
     """ Validate file existence for arguments """
     if not os.path.isfile( path ):
         raise argparse.ArgumentTypeError( f"The file '{ path }' does not exist." )
     return path
 
-# --------------------------- Export Functions ---------------------------
 
+# --------------------------- Export Functions ---------------------------
 def parse_user_args() -> argparse.ArgumentParser:
-    """ Parses command line arguments and returns as namespace object for further processing the caller """
+    """ Parses command line arguments and returns parser object to caller """
+    # ----------------- Module Options -----------------
     parser = argparse.ArgumentParser( add_help = False )    
     parser.add_argument(
         '-h'
@@ -38,11 +41,12 @@ def parse_user_args() -> argparse.ArgumentParser:
     parser.add_argument(
         '-q'
         , '--quiet'
-        , action = 'store_true'
-        , help   = 'Suppress the banner & configuration output'
+        , default   = False
+        , action    = 'store_true'
+        , help      = 'Suppress the banner & configuration output'
     )
 
-    # ------------------- Build Options --------------------
+    # ----------------- Build Options ------------------
     build_opt_group = parser.add_argument_group( title = "Build Options", description = "Set options to control how hashycalls functions." )
     build_opt_group.add_argument( 
         '-s'
@@ -95,6 +99,7 @@ def parse_user_args() -> argparse.ArgumentParser:
         , default   = 'hWin32'
         , help      = 'Set the name of the api structure variable. This is used when accessing the hashed functions in your code.'
     )
+
     # ---------------- API Call Inputs -----------------
     input_arg_group = parser.add_mutually_exclusive_group()
     input_arg_group.add_argument(
