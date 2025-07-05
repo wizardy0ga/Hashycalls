@@ -177,7 +177,7 @@ def main():
         # Print config
         if not args.quiet:
             args_dict = vars( args )
-            for arg in [ 'apicalls', 'file' ]:
+            for arg in [ 'apicalls', 'file', 'help', 'version', 'quiet' ]:
                 del args_dict[ arg ]
             print_config( args_dict )
 
