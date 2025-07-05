@@ -2,18 +2,11 @@ import os
 import re
 import sys
 import json
+from hashycalls.colors import *
 
 # -------------------------- Constants --------------------------
 SCRIPT_VERSION      = "2.0.0"
 TEMPLATE_VERSION    = "2.0.0"
-
-GREEN   = "\033[1;32m"
-RED     = "\033[0;31m"
-CYAN    = "\033[1;36m"
-PURPLE  = "\033[1;35m"
-WHITE   = "\033[1;37m"
-END     = "\033[0m"
-YELLOW  = "\033[1;33m"
 
 WIN32_DATA   = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'winapi.json' )
 DJB2_FILE    = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'code', 'templates', 'djb2.c' )
