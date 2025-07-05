@@ -8,16 +8,19 @@ from hashycalls.colors import *
 SCRIPT_VERSION      = "2.0.0"
 TEMPLATE_VERSION    = "2.0.0"
 
+TYPE_LOOKUP  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'conversion.json' )
 WIN32_DATA   = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'winapi.json' )
 DJB2_FILE    = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'code', 'templates', 'djb2.c' )
 HEADER_FILE  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'code', 'solution file', 'src', 'hashycalls.h' )
 SOURCE_FILE  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'code', 'solution file', 'src', 'hashycalls.c' )
 
-# ---------------------- Import NT API Data ---------------------
+# ---------------------- Import Data Sets ---------------------
 with open( WIN32_DATA, 'r' ) as file:
     win32_data = json.loads( file.read() )
+with open( TYPE_LOOKUP, 'r' ) as file:
+    illegal_name_lookup = json.loads( file.read() )
     
-# --------------------------- Classes ---------------------------
+# --------------------------- Classes -------------------------
 class ApiCall( object ):
     """
     Represents an api call to be resolved by hash & used in the sourced code such as LoadLibraryA, NtAllocateVirtualMemory, etc.
@@ -42,11 +45,6 @@ class ApiCall( object ):
         # Cleanup unnecessary naming conventions from microsoft before creating prototype. Requires 
         # user to modify output source code if left untouched. Example, HINTERNET is actually LPVOID 
         # but HINTERNET is not included in default win32 header so compilation fails due to missing type definition.
-        illegal_name_lookup = \
-        {
-            # illegal name: valid name
-            "HINTERNET": "LPVOID"
-        }
         if self.data['return_type'] in illegal_name_lookup:
             self.data['return_type'] = illegal_name_lookup[ self.data['return_type'] ]
         for param in self.data['arguments']:
@@ -55,6 +53,10 @@ class ApiCall( object ):
         self.prototype = self.create_prototype()
 
     def create_prototype( self ):
+        """ 
+        Create the prototype string for the apicall to be placed in the HWINAPI structure
+        LPVOID ( WINAPI* VirtualAlloc ) ( LPVOID lpAddress, SIZE_T dwSize, DWORD flAllocationType, DWORD flProtect );
+        """
         prototype = f"{ self.data['return_type'] } ( WINAPI* { self.name } ) ( "
         if self.data['n_arguments'] > 0:
             for param, index in zip( self.data['arguments'], range( 0, self.data['n_arguments'] ) ):
@@ -64,6 +66,7 @@ class ApiCall( object ):
         else:
             prototype = f'{ prototype[:-1] })'
         return prototype
+
 
 class Win32Api( object ):
     """ 
@@ -142,6 +145,7 @@ class Win32Api( object ):
         structure += "}\nHWINAPI, *PHWINAPI;"
         return structure
 
+
 class SourceCode( object ):
     """
     Represents the source code of a file. Intended to be used as a parent object for other source code objects.
@@ -210,6 +214,7 @@ class SourceCode( object ):
         header += self.content
         self.content = header
 
+
 class HashycallsFile( SourceCode ):
     """ 
     Base object for .c & .h hashycalls files.
@@ -263,7 +268,8 @@ class HashycallsFile( SourceCode ):
         for x in list( string ):
             Hash = ord( x ) + ( Hash << 6 ) + ( Hash << 16 ) - Hash
         return "0x%X" % ( Hash & 0xFFFFFFFF )
-        
+
+
 class HashycallsHeader( HashycallsFile ):
     """ Represents the hashycalls header file """
     def __init__( self, apicalls: list, globals: bool, api_list_name: str, algo: str, seed: int ):
@@ -289,6 +295,7 @@ class HashycallsHeader( HashycallsFile ):
         for function in self.api_call_list.apicalls:
             function_hashes += f"# define hc_{ function.name } { function.hash }\n"
         self.replace_content( function_hashes, r'(?s)# define hc_GetCurrentProcessId*.*# define hc_MessageBoxA\t\t\t\t0x[0-9A-F]*\n' )
+
 
 class HashycallsSource( HashycallsFile ):
     """ Represents the hashycalls source (.c) file """
@@ -357,6 +364,7 @@ class HashycallsSource( HashycallsFile ):
             self.replace_content( f'# define HashStringA( String ) { self.hash_function_name }A( String )', r'# define HashStringA\( String \).*' )
             self.replace_content( f'# define HashStringW( String ) { self.hash_function_name }W( String )', r'# define HashStringW\( String \).*' )
 
+# --------------------------- Classes -------------------------
 class HashyCalls( object ):
     """ Container object for hashycalls header & source files """
     def __init__( self, apicalls: list, globals: bool, api_list_name: str, algo: str, seed: int, debug: bool ):
