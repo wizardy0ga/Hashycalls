@@ -32,7 +32,8 @@ def parse_user_args() -> argparse.ArgumentParser:
     )
     
     parser.add_argument(
-        '--version'
+        '-v'
+        , '--version'
         , default   = False
         , action    = 'store_true'
         , help      = 'Show the template & script versions then quit.'
@@ -57,7 +58,7 @@ def parse_user_args() -> argparse.ArgumentParser:
     )
 
     build_opt_group.add_argument(
-        '-a'
+        '-al'
         , '--algo'
         , choices   = [ 'sdbm', 'djb2' ]
         , type      = str
@@ -74,21 +75,24 @@ def parse_user_args() -> argparse.ArgumentParser:
     )
     
     build_opt_group.add_argument(
-        '--debug'
+        '-d'
+        , '--debug'
         , action    = 'store_true'
         , default   = False
         , help      = 'Enables debug statements in the output sourcecode.' 
     )
 
     build_opt_group.add_argument(
-        '--globals'
+        '-g'
+        , '--globals'
         , action    = 'store_true'
         , default   = False
         , help      = 'Enables a globally accessible api structure.'
     )
 
     build_opt_group.add_argument(
-        '--remove_comments'
+        '-r'
+        , '--remove_comments'
         , action    = 'store_true'
         , help      = 'Remove comments from the source code.'
     )
@@ -103,14 +107,16 @@ def parse_user_args() -> argparse.ArgumentParser:
     # ---------------- API Call Inputs -----------------
     input_arg_group = parser.add_mutually_exclusive_group()
     input_arg_group.add_argument(
-        '--apicalls'
+        '-a'
+        , '--apicalls'
         , type      = str
         , nargs     = "+"
         , help      = 'A list of win32 api calls to generate a template for.'
     )
     
     input_arg_group.add_argument(
-        '--file'
+        '-f'
+        , '--file'
         , type      = file_exists
         , help      = 'Path to file containing a list of api calls. Use a new line [\\n] to seperate each api call.' 
     )
