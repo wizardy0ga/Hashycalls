@@ -2,6 +2,7 @@ import os
 import random
 import argparse
 
+# -------------------------- Private Functions --------------------------
 def dir_exists( path: str ) -> str:
     """ Validate directory existence for arguments """
     if not os.path.isdir( path ):
@@ -14,23 +15,31 @@ def file_exists( path:str ) -> str:
         raise argparse.ArgumentTypeError( f"The file '{ path }' does not exist." )
     return path
 
+# --------------------------- Export Functions ---------------------------
 
-def parse_user_args() -> argparse.Namespace:
+def parse_user_args() -> argparse.ArgumentParser:
     """ Parses command line arguments and returns as namespace object for further processing the caller """
-    parser = argparse.ArgumentParser()
-    parser.add_argument( 
-        '-o'
-        , '--outdir'
-        , default   = os.getcwd()
-        , type      = dir_exists
-        , help      = 'A directory to write the source files to. Defaults to "Out" directory.'
+    parser = argparse.ArgumentParser( add_help = False )    
+    parser.add_argument(
+        '-h'
+        , '--help'
+        , default   = False
+        , action    = 'store_true'
+        , help      = 'Show this message and quit.'
     )
-
+    
     parser.add_argument(
         '--version'
         , default   = False
         , action    = 'store_true'
-        , help      = 'show the template & script versions then quit.'
+        , help      = 'Show the template & script versions then quit.'
+    )
+
+    parser.add_argument(
+        '-q'
+        , '--quiet'
+        , action = 'store_true'
+        , help   = 'Suppress the banner & configuration output'
     )
 
     # ------------------- Build Options --------------------
@@ -47,15 +56,24 @@ def parse_user_args() -> argparse.Namespace:
         '-a'
         , '--algo'
         , choices   = [ 'sdbm', 'djb2' ]
+        , type      = str
         , default   = 'sdbm'
         , help      = 'An algorithm to hash the api calls with. Defaults to sdbm.'
+    )
+    
+    build_opt_group.add_argument( 
+        '-o'
+        , '--outdir'
+        , default   = os.getcwd()
+        , type      = dir_exists
+        , help      = 'A directory to write the source files to. Defaults to "Out" directory.'
     )
     
     build_opt_group.add_argument(
         '--debug'
         , action    = 'store_true'
         , default   = False
-        , help      = 'Enables debug statements' 
+        , help      = 'Enables debug statements in the output sourcecode.' 
     )
 
     build_opt_group.add_argument(
@@ -68,7 +86,6 @@ def parse_user_args() -> argparse.Namespace:
     build_opt_group.add_argument(
         '--remove_comments'
         , action    = 'store_true'
-        , default   = False
         , help      = 'Remove comments from the source code.'
     )
     
@@ -84,14 +101,13 @@ def parse_user_args() -> argparse.Namespace:
         '--apicalls'
         , type      = str
         , nargs     = "+"
-        , help      = 'List of win32 api calls to generate a template for'
+        , help      = 'A list of win32 api calls to generate a template for.'
     )
     
     input_arg_group.add_argument(
         '--file'
-        , type    = file_exists
-        , default = False
-        , help    = 'Path to file containing a list of api calls. Use a new line [\\n] to seperate each api call.' 
+        , type      = file_exists
+        , help      = 'Path to file containing a list of api calls. Use a new line [\\n] to seperate each api call.' 
     )
 
-    return parser.parse_args()
+    return parser
