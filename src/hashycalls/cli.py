@@ -18,7 +18,7 @@ def print_banner( key_width: int, val_width: int ) -> None:
     print( f"║{ WHITE }{'|__| |__| [__  |__|  \\_/  __ |    |__| |    |    [__'.center( val_width + key_width + 2, ' ' ) }  { RED }║")
     print( f"║{ WHITE }{'|  | |  | ___] |  |   |      |___ |  | |___ |___ ___]'.center( val_width + key_width + 4, ' ' ) }{ RED }║")
     print( f"║{' '.center( key_width + val_width + 4, ' ' ) }{ RED }║")
-    print( f"║{ RED }{ 'An Import Address Table obfuscation utility for C'.center( val_width + key_width + 4, ' ' ) }{ RED }║")
+    print( f"║{ RED }{ 'An Import Address Table obfuscation utility for C/C++ windows implants'.center( val_width + key_width + 4, ' ' ) }{ RED }║")
     print( f"║{ 'Coded By: Wizardy0ga'.center( val_width + key_width + 4 ) }║")
     print( f"║{ f'Script Version: { SCRIPT_VERSION } | Template Version: { TEMPLATE_VERSION }'.center( key_width + val_width + 4 ) }║")
     print( f"║{' '.center( key_width + val_width + 4, ' ' ) }{ RED }║")
