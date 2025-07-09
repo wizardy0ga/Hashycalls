@@ -5,24 +5,27 @@ from hashycalls.core import *
 from hashycalls.args import parse_user_args
 
 # ----------------- Private Functions ------------------
-def print_banner( key_width: int, val_width: int ) -> None:
+def print_banner( key_width: int, val_width: int ) -> int:
     """ Print the hashycalls banner """
-    # Determine amount of minimum space required for the banner
-    banner_top = "_  _ ____ ____ _  _ _   _    ____ ____ _    _    ____"
-    if ( key_width + val_width ) < len( banner_top ):
-        val_width = ( ( len( banner_top ) - key_width ) + 2 )
+    # Determine amount of minimum space required for the banner. This is the longest string.
+    ret = 0
+    description = "An Import Address Table obfuscation utility for C/C++ windows implants"
+    if ( key_width + val_width ) < len( description ):
+        val_width = ( ( len( description ) - key_width ) + 2 )
+        ret = val_width
 
     # print it
     print( f"{ RED }╔{ '═' * ( key_width + val_width + 4) }╗" )
-    print( f"║{ WHITE }{ banner_top.center( val_width + key_width + 4, ' ' ) }{ RED }║")
+    print( f"║{ WHITE }{ '_  _ ____ ____ _  _ _   _    ____ ____ _    _    ____'.center( val_width + key_width + 4, ' ' ) }{ RED }║")
     print( f"║{ WHITE }{'|__| |__| [__  |__|  \\_/  __ |    |__| |    |    [__'.center( val_width + key_width + 2, ' ' ) }  { RED }║")
     print( f"║{ WHITE }{'|  | |  | ___] |  |   |      |___ |  | |___ |___ ___]'.center( val_width + key_width + 4, ' ' ) }{ RED }║")
     print( f"║{' '.center( key_width + val_width + 4, ' ' ) }{ RED }║")
-    print( f"║{ RED }{ 'An Import Address Table obfuscation utility for C/C++ windows implants'.center( val_width + key_width + 4, ' ' ) }{ RED }║")
+    print( f"║{ RED }{ description.center( val_width + key_width + 4, ' ' ) }{ RED }║")
     print( f"║{ 'Coded By: Wizardy0ga'.center( val_width + key_width + 4 ) }║")
     print( f"║{ f'Script Version: { SCRIPT_VERSION } | Template Version: { TEMPLATE_VERSION }'.center( key_width + val_width + 4 ) }║")
     print( f"║{' '.center( key_width + val_width + 4, ' ' ) }{ RED }║")
 
+    return ret
 
 def _format_args( action, default_metavar: str ) -> str:
     """ 
@@ -104,11 +107,12 @@ def print_help( parser ) -> str:
 
 def print_config( dictionary: dict ) -> None:
     """ Prints argument configuration & banner """
-    banner_top = "_  _ ____ ____ _  _ _   _    ____ ____ _    _    ____"
     key_width  = max( len( str( key ) ) for key in dictionary ) + 1
     val_width  = max( len( str( val ) ) for val in dictionary.values() ) + 2
 
-    print_banner( key_width, val_width )
+    required_size = print_banner( key_width, val_width )
+    val_width = required_size if val_width < required_size else val_width
+
 
     # Create sections of the config
     top         = f"{ RED }╠{ '═' * ( key_width + 1 ) }╦{ '═' * ( val_width + 2 ) }╣"
