@@ -528,7 +528,7 @@ PHWINAPI InitApiCalls()
 			}
 # endif // USING_EXTERNAL_MODULES
 # ifndef USING_EXTERNAL_MODULES
-			dbg( "Could not locate a handle for 0x%0.8X from the peb. Initialization failed." );
+			dbg( "Could not locate a handle for 0x%0.8X from the peb. Initialization failed.", ModuleHashes[ i ] );
 			return FALSE;
 # endif // !USING_EXTERNAL_MODULES
 		}
