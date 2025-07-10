@@ -8,7 +8,8 @@ from hashycalls.colors import *
 SCRIPT_VERSION      = "2.0.0"
 TEMPLATE_VERSION    = "2.0.0"
 
-TYPE_LOOKUP  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'conversion.json' )
+NAME_LOOKUP  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'name-conversion.json' )
+TYPE_LOOKUP  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'type-conversion.json' )
 WIN32_DATA   = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'winapi.json' )
 DJB2_FILE    = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'code', 'templates', 'djb2.c' )
 HEADER_FILE  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'code', 'solution file', 'src', 'hashycalls.h' )
@@ -18,8 +19,10 @@ SOURCE_FILE  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rs
 with open( WIN32_DATA, 'r' ) as file:
     win32_data = json.loads( file.read() )
 with open( TYPE_LOOKUP, 'r' ) as file:
-    illegal_name_lookup = json.loads( file.read() )
-    
+    illegal_type_lookup = json.loads( file.read() )
+with open( NAME_LOOKUP, 'r' ) as file:
+    name_change_lookup = json.loads( file.read() )
+
 # --------------------------- Classes -------------------------
 class ApiCall( object ):
     """
@@ -45,11 +48,11 @@ class ApiCall( object ):
         # Cleanup unnecessary naming conventions from microsoft before creating prototype. Requires 
         # user to modify output source code if left untouched. Example, HINTERNET is actually LPVOID 
         # but HINTERNET is not included in default win32 header so compilation fails due to missing type definition.
-        if self.data['return_type'] in illegal_name_lookup:
-            self.data['return_type'] = illegal_name_lookup[ self.data['return_type'] ]
+        if self.data['return_type'] in illegal_type_lookup:
+            self.data['return_type'] = illegal_type_lookup[ self.data['return_type'] ]
         for param in self.data['arguments']:
-            if param[ 'type' ] in illegal_name_lookup:
-                param[ 'type' ] = illegal_name_lookup[ param[ 'type' ] ]
+            if param[ 'type' ] in illegal_type_lookup:
+                param[ 'type' ] = illegal_type_lookup[ param[ 'type' ] ]
         self.prototype = self.create_prototype()
 
     def create_prototype( self ):
@@ -251,7 +254,11 @@ class HashycallsFile( SourceCode ):
         # Create api call objects & set function / dll hashes
         self.api_call_list = [ ApiCall( apicall ) for apicall in apicalls ]
         for function in self.api_call_list:
-            function.hash           = self.hash_function( function.name )
+            # Some functions have different names in the header file than what's in the dll. An example is 
+            # EnumProcesses. This function lives in Kernel32.dll as K32EnumProcesses. This loc accounts for
+            # this & hashes the proper name found in /rsrc/data/name-conversion.json.
+            target = function.name if function not in name_change_lookup else name_change_lookup[ function ]
+            function.hash           = self.hash_function( target )
             function.module_hash    = self.hash_function( function.module )
         self.api_call_list = Win32Api( apicalls = self.api_call_list)
 
