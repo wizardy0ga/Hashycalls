@@ -255,8 +255,9 @@ class HashycallsFile( SourceCode ):
         self.api_call_list = [ ApiCall( apicall ) for apicall in apicalls ]
         for function in self.api_call_list:
             # Some functions have different names in the header file than what's in the dll. An example is 
-            # EnumProcesses. This function lives in Kernel32.dll as K32EnumProcesses. This loc accounts for
-            # this & hashes the proper name found in /rsrc/data/name-conversion.json.
+            # EnumProcesses since it's a actually a macro for K32EnumProcesses. This function lives in 
+            # Kernel32.dll as K32EnumProcesses. This loc accounts for this & hashes the proper name found 
+            # in /rsrc/data/name-conversion.json
             target = function.name if function not in name_change_lookup else name_change_lookup[ function ]
             function.hash           = self.hash_function( target )
             function.module_hash    = self.hash_function( function.module )
