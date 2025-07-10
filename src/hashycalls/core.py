@@ -138,6 +138,14 @@ class Win32Api( object ):
                 structure   += f"\t\tHMODULE { self.modules[ function.module ][ 'member_name' ] };\n"
         structure += "\t}\n\tModules;\n"
         
+        # Make sure function calls are in correct order. Just need to be grouped by dll.
+        # This ensures the FUNCTION_HASHES list order matches the order of the structure
+        # definitions, providing accurate address resolution via parallelism
+        new_list = []
+        for module in self.modules:
+            new_list += [ function for function in self.apicalls if function.module == module ]
+        self.apicalls = new_list
+        
         # Add function prototypes
         for module in self.modules.values():
             structure += "\n\tstruct\n\t{\n"
