@@ -1,54 +1,61 @@
 /*
  * Generated with hashycalls v-2.0.0
  * Template version: 2.0.0
- * Commandline: C:\Users\Admin\Desktop\Repositories\Public\hashycalls\hashycalls\__main__.py --apicalls VirtualAllocEx WriteProcessMemory CreateRemoteThread InternetOpenUrlA InternetReadFile WSAStartup --outdir .\example-output\
- * ID: 04531277-93be-4c89-8740-3689ad258151
+ * Commandline: C:\Users\Admin\AppData\Roaming\Python\Python313\Scripts\hashycalls --apicalls CreateToolhelp32Snapshot Process32FirstW Process32NextW wcscmp OpenProcess VirtualAllocEx VirtualProtectEx WriteProcessMemory CreateRemoteThread WaitForSingleObject CloseHandle --quiet --debug --globals --outdir .\example-output\
+ * ID: d0f1a209-b12a-4531-81b5-f479b9e85544
  * Using function calls:
+ * 	[+] - CreateToolhelp32Snapshot
+ * 	[+] - Process32FirstW
+ * 	[+] - Process32NextW
+ * 	[+] - wcscmp
+ * 	[+] - OpenProcess
  * 	[+] - VirtualAllocEx
+ * 	[+] - VirtualProtectEx
  * 	[+] - WriteProcessMemory
  * 	[+] - CreateRemoteThread
- * 	[+] - InternetOpenUrlA
- * 	[+] - InternetReadFile
- * 	[+] - WSAStartup
+ * 	[+] - WaitForSingleObject
+ * 	[+] - CloseHandle
 */
 # include "hashycalls.h"
 
 /* ------------------------- Macros ------------------------- */
 // --- Control
-// # define DEBUG
+# define DEBUG
 
 // --- Values
 # define NT_SUCCESS 0x0
-# define MODULES 3
+# define MODULES 2
 
 // --- String Hashes
-# define HASH_SEED 5733
-# define WINDIR 0x89983556
-# define SYSTEM32 0xE69E2613
+# define HASH_SEED 2558
+# define WINDIR 0x5B24336F
+# define SYSTEM32 0xC25AA7AC
 
 // --- Default library hashes
-# define NTDLL 0x3E1A2CEF
-# define KERNEL32 0xF3B06DD7
+# define NTDLL 0xD3171196
+# define KERNEL32 0x4790B670
 
 // --- Default function hashes
-# define NtAllocateVirtualMemory_Hash 0x2F0C18E4
-# define LoadLibraryA_Hash 0x435D4351
-# define FindFirstFileA_Hash 0xC010A553
-# define FindNextFileA_Hash 0xCE38BC54
+# define NtAllocateVirtualMemory_Hash 0x19EC850B
+# define LoadLibraryA_Hash 0x973D8BEA
 
 // --- Module & function hash lists
 # define MODULE_HASHES \
 	hc_Kernel32, \
-	hc_Wininet, \
-	hc_Ws2_32 \
+	hc_Ntdll \
 
 # define FUNCTION_HASHES \
+	 hc_CreateToolhelp32Snapshot, \
+	 hc_Process32FirstW, \
+	 hc_Process32NextW, \
+	 hc_OpenProcess, \
 	 hc_VirtualAllocEx, \
+	 hc_VirtualProtectEx, \
 	 hc_WriteProcessMemory, \
 	 hc_CreateRemoteThread, \
-	 hc_InternetOpenUrlA, \
-	 hc_InternetReadFile, \
-	 hc_WSAStartup \
+	 hc_WaitForSingleObject, \
+	 hc_CloseHandle, \
+	 hc_wcscmp \
 
 // --- Functions
 # ifdef DEBUG
@@ -75,8 +82,6 @@
 /* ----------------------- Prototypes ----------------------- */
 typedef NTSTATUS	( NTAPI*  fpNtAllocateVirtualMemory )	( HANDLE ProcessHandle, PVOID *BaseAddress, ULONG_PTR ZeroBits, PSIZE_T RegionSize, ULONG AllocationType, ULONG Protect );
 typedef HMODULE		( WINAPI* fpLoadLibraryA )				( LPCSTR lpLibFileName );
-typedef HANDLE		( WINAPI* fpFindFirstFileA )			( LPCSTR lpFileName, LPWIN32_FIND_DATAA lpFindFileData );
-typedef BOOL		( WINAPI* fpFindNextFileA )				( HANDLE hFindFile, LPWIN32_FIND_DATAA lpFindFileData );
 
 /* ----------------------- Structures ----------------------- */
 typedef struct _UNICODE_STRING_
@@ -289,86 +294,6 @@ static SIZE_T GetEnvironmentVarByHash( IN DWORD Hash, OUT PCHAR OutBuffer, IN SI
     return -1;
 }
 
-/*
-	@brief
-		Load a dll from c:\windows\system32\
-
-	@param[in]    DWORD Hash
-		A hash of the module name to search for
-
-	@return HMODULE || NULL
-		A handle to the target module if it was found, NULL if not.
-*/
-static HMODULE LoadDllFromSystem32ByHash( IN DWORD Hash ) 
-{
-
-    HANDLE				hFile;
-    HMODULE				hKernel32;
-	fpLoadLibraryA		LoadLibraryA;
-	fpFindFirstFileA	FindFirstFileA;
-	fpFindNextFileA		FindNextFileA;
-	CHAR				DirSearchString[ MAX_PATH ];
-    BOOL				System32Found	= FALSE;
-    WIN32_FIND_DATAA	FileData		= { 0 };
-
-	/* Locate necessary functions */
-	if ( ( hKernel32 = GetModuleHandleByHash( KERNEL32 ) ) == NULL )
-		return NULL;
-
-    if ( ( LoadLibraryA	  = ( fpLoadLibraryA )GetProcAddressByHash( hKernel32, LoadLibraryA_Hash ) ) == NULL )
-		return NULL;
-
-	if ( ( FindFirstFileA = ( fpFindFirstFileA )GetProcAddressByHash( hKernel32, FindFirstFileA_Hash ) ) == NULL )
-		return NULL;
-
-    if ( ( FindNextFileA  = ( fpFindNextFileA )GetProcAddressByHash( hKernel32, FindNextFileA_Hash ) ) == NULL )
-		return NULL;
-    
-	/* Get the windows directory via windir environment variable*/
-	if ( ( GetEnvironmentVarByHash( WINDIR, DirSearchString, MAX_PATH ) ) == -1 )
-        return NULL;
-
-    StringConcatA( DirSearchString, "\\*" );
-
-	/* Start searching for system32 */
-    if ( ( hFile = FindFirstFileA( DirSearchString, &FileData ) ) == INVALID_HANDLE_VALUE ) 
-        return NULL;
-   
-    do
-    {
-        if ( HashStringA( FileData.cFileName ) == SYSTEM32 )
-        {
-            DirSearchString[ StringLengthA( DirSearchString ) - 1 ] = '\0';
-            StringConcatA( DirSearchString, FileData.cFileName );
-            StringConcatA( DirSearchString, "\\*" );
-            System32Found = TRUE;
-			break;
-        }
-    } 
-    while ( FindNextFileA( hFile, &FileData ) != 0 );
-
-    if ( !System32Found )
-        return NULL;
-
-	/* Search C:\windows\system32\ for the dll file */
-    if ( ( hFile = FindFirstFileA( DirSearchString, &FileData ) ) == INVALID_HANDLE_VALUE )
-        return NULL;
-   
-    do 
-    {
-        ToLower( FileData.cFileName );
-        if ( HashStringA( FileData.cFileName ) == Hash ) 
-        {
-            dbg( "Resolved 0x%0.8X to %s", Hash, FileData.cFileName );
-            return LoadLibraryA( FileData.cFileName );
-        }
-    } 
-    while ( FindNextFileA( hFile, &FileData ) != 0 );
-
-    dbg( "Could not resolve 0x%0.8X to any dll in system32", Hash );
-    return NULL;
-}
-
 /* ------------------- External Functions ------------------- */
 HMODULE GetModuleHandleByHash( IN DWORD Hash ) 
 {
@@ -530,12 +455,8 @@ PHWINAPI InitApiCalls()
 	{
 		if ( ( *phModule = GetModuleHandleByHash( ModuleHashes[ i ] ) ) == NULL )
 		{
-			dbg( "Could not locate a handle for 0x%0.8X from the peb. Attempting to load dll via system32", ModuleHashes[ i ] );
-			if ( ( *phModule = LoadDllFromSystem32ByHash( ModuleHashes[ i ] ) ) == NULL )
-			{
-				dbg( "Could not resolve 0x%0.8X to any dll in system32. Initialization failed.", ModuleHashes[ i ] );
-				return FALSE;
-			}
+			dbg( "Could not locate a handle for 0x%0.8X from the peb. Initialization failed.", ModuleHashes[ i ] );
+			return FALSE;
 		}
 		phModule++;
 	}
@@ -544,8 +465,7 @@ PHWINAPI InitApiCalls()
 	dbg( "Populating function addresses" );
 	pFunction = ( PVOID* ) &( hc_API_VAR_NAME->Kernel32 );
 	POPULATE_FUNCTIONS( Kernel32 )
-	POPULATE_FUNCTIONS( Wininet )
-	POPULATE_FUNCTIONS( Ws2_32 )
+	POPULATE_FUNCTIONS( Ntdll )
 	
 	dbg( "Successfully initialized api call structure. Structure memory location: %p", hc_API_VAR_NAME );
 
