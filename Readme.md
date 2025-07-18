@@ -58,7 +58,7 @@ hashysource.header.write_to_dir('inc')
 ```
 
 ## Hashycalls Template
-To use hashycalls in your implant, include **hashycalls.h** file in any source file where you need to access the hidden function calls. **InitApiCalls** needs to be called once during runtime to populate the hashed api structure. From there, developers can access function calls using the structure itself or the **EXEC** macro.
+To use hashycalls in your implant, include the **hashycalls.h** header file in any source file where you need to access the hidden function calls. **InitApiCalls** needs to be called once during runtime to populate the hashed api structure. From there, developers can access function calls using the structure itself or the **EXEC** macro.
 
 ```c
 # include "hashycalls.h"
