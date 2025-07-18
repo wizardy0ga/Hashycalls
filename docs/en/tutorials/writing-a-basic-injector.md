@@ -192,4 +192,4 @@ For further verification, we can check the import address table with CFF Explore
 
 Finally, we spawn a notepad process & run the hashed injector to verify it's still working after the conversion. The debug statements confirm the function hashes were resolved to the correct address.
 
-![alt text](../../img/execution.png)
+![alt text](../../img/injector-execution.gif)
