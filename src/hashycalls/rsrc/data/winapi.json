@@ -137276,7 +137276,7 @@
     },
     "EnumProcesses": {
         "category": "Processes",
-        "dll": "Kernel32.dll on Windows 7 and Windows Server 2008 R2;  Psapi.dll (if PSAPI_VERSION=1) on Windows 7 and Windows Server 2008 R2;  Psapi.dll on Windows Server 2008, Windows Vista, Windows Server 2003, and Windows XP",
+        "dll": "kernel32.dll",
         "header": "Psapi.h",
         "return_type": "BOOL",
         "n_arguments": 3,
@@ -137284,7 +137284,7 @@
             {
                 "in_out": "_Out_",
                 "type": "DWORD*",
-                "name": "pProcessIds",
+                "name": "lpidProcess",
                 "description": "A pointer to an array that receives the list of process identifiers."
             },
             {
@@ -137296,7 +137296,7 @@
             {
                 "in_out": "_Out_",
                 "type": "DWORD*",
-                "name": "pBytesReturned",
+                "name": "lpcbNeeded",
                 "description": "The number of bytes returned in the pProcessIds array."
             }
         ]
@@ -195364,6 +195364,23 @@
                 "type": "PDMA_ADAPTER",
                 "name": "DmaAdapter",
                 "description": "A pointer to the DMA_ADAPTER structure returned by IoGetDmaAdapter that represents the bus-master adapter or DMA controller."
+            }
+        ]
+    },
+    "wcscmp": {
+        "dll": "ntdll.dll",
+        "return_type": "int",
+        "n_arguments": 2,
+        "arguments": [
+            {
+                "in_out": "_IN_",
+                "type": "const wchar_t",
+                "name": "*string1"
+            },
+            {
+                "in_out": "_IN_",
+                "type": "const wchar_t",
+                "name": "*string2"
             }
         ]
     },
