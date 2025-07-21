@@ -10,36 +10,23 @@ build-backend   = "hatchling.build"
 [project]
 name        = "hashycalls"
 readme      = "README.md"
-version     = "2.0.0"
+version     = "2.0.1"
 description = "An Import Address Table obfuscation utility for C/C++ based windows implants"
 authors     = [ 
     {name="wizardy0ga"} 
 ]
 requires-python = ">=3.10"
+
 # Create 'hashycalls' command pointing at main function
 [project.scripts]
 hashycalls = "hashycalls.cli:main"
 
+# Add urls to metadata
 [project.urls]
 Github          = "https://github.com/wizardy0ga/hashycalls"
 Source          = "https://github.com/wizardy0ga/Hashycalls/tree/master/src/hashycalls"
 Documentation   = "https://github.com/wizardy0ga/Hashycalls/tree/master/docs/en"
 
-# Define files to include in the wheel & source distributions. These are the final files
-# to be included in the code base.
+# Remove 'src' from pathing
 [tool.hatch.build]
-sources = [
-    "src"   # Must define sources as array with prefix to remove from include paths otherwise incur import crashes due to path issues
-]
-
-include = [ 
-    "src/hashycalls/*.py",
-    "src/hashycalls/rsrc/data/*",
-    "src/hashycalls/rsrc/code/templates/*",
-    "src/hashycalls/rsrc/code/solution file/src/*",
-    "src/hashycalls/rsrc/code/solution file/proj/hashycalls.*",
-    "src/hashycalls/rsrc/code/solution file/.editorconfig",
-    "src/hashycalls/rsrc/code/solution file/hashycalls.sln",
-    "src/hashycalls/README.md",
-    "docs/*"
-]
+sources = ["src"]
