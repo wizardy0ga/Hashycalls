@@ -12,13 +12,18 @@ name        = "hashycalls"
 readme      = "README.md"
 version     = "2.0.0"
 description = "An Import Address Table obfuscation utility for C/C++ based windows implants"
-author      = [ 
+authors     = [ 
     {name="wizardy0ga"} 
 ]
 requires-python = ">=3.10"
 # Create 'hashycalls' command pointing at main function
 [project.scripts]
 hashycalls = "hashycalls.cli:main"
+
+[project.urls]
+Github          = "https://github.com/wizardy0ga/hashycalls"
+Source          = "https://github.com/wizardy0ga/Hashycalls/tree/master/src/hashycalls"
+Documentation   = "https://github.com/wizardy0ga/Hashycalls/tree/master/docs/en"
 
 # Define files to include in the wheel & source distributions. These are the final files
 # to be included in the code base.
@@ -35,5 +40,6 @@ include = [
     "src/hashycalls/rsrc/code/solution file/proj/hashycalls.*",
     "src/hashycalls/rsrc/code/solution file/.editorconfig",
     "src/hashycalls/rsrc/code/solution file/hashycalls.sln",
-    "src/hashycalls/README.md"
+    "src/hashycalls/README.md",
+    "docs/*"
 ]
