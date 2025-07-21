@@ -14,11 +14,12 @@ git clone https://github.com/wizardy0ga/hashycalls
 pip install .\hashycalls
 ```
 
-# Important
-This project is now on version 2.0.0 beta. It has not officially been officially released on version 2 yet. When a full release occurs, this message will be stripped & a release package will be added to this repo.
+###### Via PyPi
+```
+pip install hashycalls
+```
 
 # Documentation
-
 ## Module
 [Using hashycalls from the command line](docs/en/usage/hashycalls/command%20line.md)  
 [Using hashycalls in a script](docs/en/usage/hashycalls/scripting.md)
