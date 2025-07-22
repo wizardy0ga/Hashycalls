@@ -94,7 +94,7 @@ In step 0, we identified the required api calls. Lets run the command below to g
 hashycalls --apicalls CreateToolhelp32Snapshot, Process32FirstW, Process32NextW, wcscmp, OpenProcess, VirtualAllocEx, VirtualProtectEx, WriteProcessMemory, CreateRemoteThread, WaitForSingleObject, CloseHandle --quiet --debug --globals
 ```
 
-This command will suppress the configuration ouptut (--quiet), enable debugging statemtents (--debug) and enable global access to the hashed api (--globals).
+This command will suppress the configuration output (--quiet), enable debugging statemtents (--debug) and enable global access to the hashed api (--globals).
 
 ![generating api calls](../../img/generating-api-calls.png)
 
@@ -108,7 +108,7 @@ Now we're ready to convert the injector with the hashycalls template. Accessing 
 | Macro | EXEC( Kernel32, OpenProcess ) ( PROCESS_ALL_ACCESS, FALSE, Process.th32ProcessID );
 | Direct Invocation | hWin32->Kernel32.OpenProcess( PROCESS_ALL_ACCESS, FALSE, Process.th32ProcessID );
 
-At this time, developers will need to manually adjust there current source code to include this syntax. In the future, hashycalls may have a feature to over write targted functions with the correct syntax for execution.
+At this time, developers will need to manually adjust their current source code to include this syntax. In the future, hashycalls may have a feature to overwrite targeted functions with the correct syntax for execution.
 
 ###### injector-hashed.c
 ```c
