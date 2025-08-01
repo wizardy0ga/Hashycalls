@@ -9,7 +9,7 @@ build-backend   = "hatchling.build"
 # Set module metadata
 [project]
 name        = "hashycalls"
-readme      = "README.md"
+readme      = "Readme.md"
 version     = "2.0.1"
 description = "An Import Address Table obfuscation utility for C/C++ based windows implants"
 authors     = [ 
