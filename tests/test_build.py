@@ -11,7 +11,7 @@ def compile( hashysource: HashyCalls ):
     # Check for visual studio vars file to intiailize dev environmen
     vcvars_file = False
     for file in [
-        "Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\vcvars64.bat",
+        "Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat",
         "Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
         "Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvars64.bat"
     ]:
