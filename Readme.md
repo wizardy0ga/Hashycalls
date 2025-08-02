@@ -22,14 +22,14 @@ pip install hashycalls
 
 # Documentation
 ## Module
-[Using hashycalls from the command line](docs/en/usage/hashycalls/command%20line.md)  
-[Using hashycalls in a script](docs/en/usage/hashycalls/scripting.md)
+[Using hashycalls from the command line](https://github.com/wizardy0ga/Hashycalls/blob/master/docs/en/usage/hashycalls/command%20line.md)  
+[Using hashycalls in a script](https://github.com/wizardy0ga/Hashycalls/blob/master/docs/en/usage/hashycalls/scripting.md)
 ## Template 
-[Using the hashycalls template file](docs/en/usage/template/hashycalls.md)
+[Using the hashycalls template file](https://github.com/wizardy0ga/Hashycalls/blob/master/docs/en/usage/template/hashycalls.md)
 
 ## Tutorials
-[Writing a basic injector with hashycalls](docs/en/tutorials/writing-a-basic-injector.md)  
-[Writing a compilation script for the basic injector](docs/en/tutorials/writing-a-compilation-script-for-basic-injector.md)
+[Writing a basic injector with hashycalls](https://github.com/wizardy0ga/Hashycalls/blob/master/docs/en/tutorials/writing-a-basic-injector.md)  
+[Writing a compilation script for the basic injector](https://github.com/wizardy0ga/Hashycalls/blob/master/docs/en/tutorials/writing-a-compilation-script-for-basic-injector.md)
 
 # Basic Usage
 This provides a brief synopsis on using the module & generated template file.
