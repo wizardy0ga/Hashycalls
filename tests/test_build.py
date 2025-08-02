@@ -8,13 +8,26 @@ from hashycalls import HashyCalls
 
 def compile( hashysource: HashyCalls ):
     """ Compile the source code & return status object from subprocess.run """
+    # Check for visual studio vars file to intiailize dev environmen
+    vcvars_file = False
+    for file in [
+        "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\vcvars64.bat",
+        "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
+        "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvars64.bat"
+    ]:
+        if os.path.exists( file ):
+            vcvars_file = file
+            break
+    if not vcvars_file:
+        fail( "Could not locate visual studio on host." )
+
     # Create file paths & code for compiler
     temp_dir      = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'temp' )
     main_source   = os.path.join( '..', 'src', 'hashycalls', 'rsrc', 'code', 'solution file', 'src', 'main.c' )
     main_dest     = os.path.join( temp_dir, 'main.c' )
     compiler_file = os.path.join( 'temp', 'compiler.bat' )
     compiler_code = f"""@echo off
-call "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+call {vcvars_file}
 cd "{ temp_dir }"
 cl main.c hashycalls.c
 link.exe main.obj hashycalls.obj /OUT:HashycallsTest.exe
