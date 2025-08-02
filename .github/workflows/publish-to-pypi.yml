@@ -24,7 +24,7 @@ jobs:
       - name: Run tests
         run: |
           cd D:\a\Hashycalls\Hashycalls\tests
-          pytest
+          pytest --verbose
 
   publish-to-pypi:
     name: Publish to PyPI
