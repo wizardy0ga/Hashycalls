@@ -1,0 +1,1 @@
+# Adding new hashing algorithms to hashycalls
