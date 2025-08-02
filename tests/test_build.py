@@ -15,7 +15,8 @@ def compile( hashysource: HashyCalls ):
         "Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
         "Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvars64.bat"
     ]:
-        if os.path.exists( os.path.join( os.getenv( 'ProgramFiles' ), file ) ):
+        file = os.path.join( os.getenv( 'ProgramFiles' ), file )
+        if os.path.exists( file ):
             vcvars_file = file
             break
     if not vcvars_file:
