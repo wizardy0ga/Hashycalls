@@ -5,13 +5,14 @@ import json
 from hashycalls.colors import *
 
 # -------------------------- Constants --------------------------
-SCRIPT_VERSION      = "2.0.0"
+SCRIPT_VERSION      = "2.1.0"
 TEMPLATE_VERSION    = "2.0.0"
 
 NAME_LOOKUP  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'name-conversion.json' )
 TYPE_LOOKUP  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'type-conversion.json' )
 WIN32_DATA   = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'winapi.json' )
 DJB2_FILE    = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'code', 'templates', 'djb2.c' )
+MURMUR_FILE  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'code', 'templates', 'murmur.c' )
 HEADER_FILE  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'code', 'solution file', 'src', 'hashycalls.h' )
 SOURCE_FILE  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'code', 'solution file', 'src', 'hashycalls.c' )
 
@@ -256,6 +257,10 @@ class HashycallsFile( SourceCode ):
                 self.hash_function      = self.hash_djb2
                 self.hash_function_file = DJB2_FILE
                 self.hash_function_name = 'HashStringDjb2'
+            case 'murmur':
+                self.hash_function      = self.hash_murmur
+                self.hash_function_file = MURMUR_FILE
+                self.hash_function_name = 'HashStringMurmur'
             case _:
                 raise Exception( f"{ RED } { algo } { END } is not a valid hashing algorithm implemented in hashycalls." )
             
@@ -285,6 +290,40 @@ class HashycallsFile( SourceCode ):
             Hash = ord( x ) + ( Hash << 6 ) + ( Hash << 16 ) - Hash
         return "0x%X" % ( Hash & 0xFFFFFFFF )
 
+    def hash_murmur( self, string: str ) -> str:
+        """ Hash a string with MurmurHash3 algo """
+        string = string.encode()
+        length = len(string)
+        Hash = self.seed
+        if length > 3:
+            idx = length >> 2
+            for i in range(idx):
+                start = i * 4
+                cnt = int.from_bytes(string[start:start+4], byteorder='little')
+                cnt = (cnt * 0xcc9e2d51) & 0xffffffff
+                cnt = ((cnt << 15) | (cnt >> 17)) & 0xffffffff
+                cnt = (cnt * 0x1b873593) & 0xffffffff
+                Hash ^= cnt
+                Hash = ((Hash << 13) | (Hash >> 19)) & 0xffffffff
+                Hash = ((Hash * 5) + 0xe6546b64) & 0xffffffff
+        remaining = length & 3
+        if remaining:
+            cnt = 0
+            start_pos = (length >> 2) * 4 + remaining - 1
+            for i in range(remaining):
+                cnt = (cnt << 8) & 0xffffffff
+                cnt |= string[start_pos - i]
+            cnt = (cnt * 0xcc9e2d51) & 0xffffffff
+            cnt = ((cnt << 15) | (cnt >> 17)) & 0xffffffff
+            cnt = (cnt * 0x1b873593) & 0xffffffff
+            Hash ^= cnt
+        Hash ^= length
+        Hash ^= Hash >> 16
+        Hash = (Hash * 0x85ebca6b) & 0xffffffff
+        Hash ^= Hash >> 13
+        Hash = (Hash * 0xc2b2ae35) & 0xffffffff
+        Hash ^= Hash >> 16
+        return "0x%X" % Hash
 
 class HashycallsHeader( HashycallsFile ):
     """ Represents the hashycalls header file """

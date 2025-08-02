@@ -3,18 +3,32 @@ import random
 import subprocess
 import shutil
 import os
+from pytest import fail
 from hashycalls import HashyCalls
-
 
 def compile( hashysource: HashyCalls ):
     """ Compile the source code & return status object from subprocess.run """
+    # Check for visual studio vars file to intiailize dev environmen
+    vcvars_file = False
+    for file in [
+        "Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat",
+        "Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
+        "Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvars64.bat"
+    ]:
+        file = os.path.join( os.getenv( 'ProgramFiles' ), file )
+        if os.path.exists( file ):
+            vcvars_file = file
+            break
+    if not vcvars_file:
+        fail( "Could not locate visual studio on host." )
+
     # Create file paths & code for compiler
     temp_dir      = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'temp' )
     main_source   = os.path.join( '..', 'src', 'hashycalls', 'rsrc', 'code', 'solution file', 'src', 'main.c' )
     main_dest     = os.path.join( temp_dir, 'main.c' )
     compiler_file = os.path.join( 'temp', 'compiler.bat' )
     compiler_code = f"""@echo off
-call "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+call {vcvars_file}
 cd "{ temp_dir }"
 cl main.c hashycalls.c
 link.exe main.obj hashycalls.obj /OUT:HashycallsTest.exe
@@ -32,9 +46,8 @@ HashycallsTest.exe
         compiler_script.write( compiler_code )
 
     # Run compiler script, remove temp dir & return status
-    status = subprocess.run( ['cmd.exe', '/c', compiler_file ], check=False )
-    shutil.rmtree( temp_dir )
-    return status
+    status = subprocess.run( ['cmd.exe', '/c', compiler_file ], check=False, capture_output=True ).returncode
+    return True if status == 0 else False
 
 
 def test_build_globals():
@@ -46,8 +59,10 @@ def test_build_globals():
         , algo          = 'djb2'
         , seed          = random.randint(1, 10000)
         , debug         = True
-    ) ).returncode != 0:
-        raise Exception( "Failed to compile and run test program." )
+    )):
+        print( 'Passed global api call list test!' )
+    else:
+        fail( 'Failed to compile program with global api call list enabled.' )
 
 
 def test_build_no_globals():
@@ -60,5 +75,23 @@ def test_build_no_globals():
         , algo          = 'djb2'
         , seed          = random.randint(1, 10000)
         , debug         = True
-    ) ).returncode != 0:
-        raise Exception( "Failed to compile and run test program." )
+    )):
+        print( 'Passed local api call list test!' )
+    else:
+        fail( 'Failed to compile program with local api call list.' )
+
+
+def test_hash_algos():
+    """ Test the hashycalls hashing algorithms """
+    for algo in [ 'sdbm', 'djb2', 'murmur' ]:
+        if compile( HashyCalls(
+            apicalls        = [ 'GetCurrentProcessId', 'MessageBoxA' ]
+            , globals       = True
+            , api_list_name = 'hWin32'
+            , algo          = algo
+            , seed          = random.randint(1, 10000)
+            , debug         = True
+        )):
+            print( f'Passed { algo } hashing algorithm test' )
+        else:
+            fail( f'Failed { algo } hashing algorithm test' )
