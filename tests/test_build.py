@@ -65,3 +65,19 @@ def test_build_no_globals():
         print( 'Passed local api call list test!' )
     else:
         fail( 'Failed to compile program with local api call list.' )
+
+
+def test_hash_algos():
+    """ Test the hashycalls hashing algorithms """
+    for algo in [ 'sdbm', 'djb2' ]:
+        if compile( HashyCalls(
+            apicalls        = [ 'GetCurrentProcessId', 'MessageBoxA' ]
+            , globals       = True
+            , api_list_name = 'hWin32'
+            , algo          = algo
+            , seed          = random.randint(1, 10000)
+            , debug         = True
+        )):
+            print( f'Passed { algo } hashing algorithm test' )
+        else:
+            fail( f'Failed { algo } hashing algorithm test' )
