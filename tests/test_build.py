@@ -32,9 +32,9 @@ HashycallsTest.exe
         compiler_script.write( compiler_code )
 
     # Run compiler script, remove temp dir & return status
-    status = subprocess.run( ['cmd.exe', '/c', compiler_file ], check=False ).returncode
-    shutil.rmtree( temp_dir )
+    status = subprocess.run( ['cmd.exe', '/c', compiler_file ], check=False, capture_output=True ).returncode
     return True if status == 0 else False
+
 
 def test_build_globals():
     """ Test hashycalls with global api pointer enabled """
