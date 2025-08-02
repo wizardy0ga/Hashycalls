@@ -1,4 +1,5 @@
-![banner](docs/img/banner.png)
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Press+Start+2P&size=72&duration=500&pause=3000&color=F7071D&center=true&width=1250&height=180&lines=Hashycalls)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Press+Start+2P&size=15&duration=5&pause=3000&color=F7071D&center=true&width=1250&lines=An+Import+Address+Table+obfuscation+utility+for+C%2FC%2B%2B+based+windows+implants)](https://git.io/typing-svg)
 # About
 Hashycalls is an import address table obfuscation utility for C/C++ implants targeting the windows operating system. This tool automates the process of creating hashes & associated resolution code. Developers need only provide a list of api calls to generate the hashycalls template. Implant side, this template  can be used to access all of the function calls. Upon compilation, the function calls **will not appear** in the import address table.   
 
