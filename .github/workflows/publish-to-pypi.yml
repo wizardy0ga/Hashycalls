@@ -22,7 +22,9 @@ jobs:
           pip install D:\a\Hashycalls\Hashycalls
           pip install pytest
       - name: Run tests
-        run: pytest
+        run: |
+          cd D:\a\Hashycalls\Hashycalls\tests
+          pytest
 
   publish-to-pypi:
     name: Publish to PyPI
