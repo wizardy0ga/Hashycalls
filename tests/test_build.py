@@ -11,11 +11,11 @@ def compile( hashysource: HashyCalls ):
     # Check for visual studio vars file to intiailize dev environmen
     vcvars_file = False
     for file in [
-        "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\vcvars64.bat",
-        "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
-        "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvars64.bat"
+        "Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\vcvars64.bat",
+        "Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
+        "Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvars64.bat"
     ]:
-        if os.path.exists( file ):
+        if os.path.exists( os.path.join( os.getenv( 'ProgramFiles' ), file ) ):
             vcvars_file = file
             break
     if not vcvars_file:
