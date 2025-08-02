@@ -3,8 +3,8 @@ import random
 import subprocess
 import shutil
 import os
+from pytest import fail
 from hashycalls import HashyCalls
-
 
 def compile( hashysource: HashyCalls ):
     """ Compile the source code & return status object from subprocess.run """
@@ -32,10 +32,9 @@ HashycallsTest.exe
         compiler_script.write( compiler_code )
 
     # Run compiler script, remove temp dir & return status
-    status = subprocess.run( ['cmd.exe', '/c', compiler_file ], check=False )
+    status = subprocess.run( ['cmd.exe', '/c', compiler_file ], check=False ).returncode
     shutil.rmtree( temp_dir )
-    return status
-
+    return True if status == 0 else False
 
 def test_build_globals():
     """ Test hashycalls with global api pointer enabled """
@@ -46,8 +45,10 @@ def test_build_globals():
         , algo          = 'djb2'
         , seed          = random.randint(1, 10000)
         , debug         = True
-    ) ).returncode != 0:
-        raise Exception( "Failed to compile and run test program." )
+    )):
+        print( 'Passed global api call list test!' )
+    else:
+        fail( 'Failed to compile program with global api call list enabled.' )
 
 
 def test_build_no_globals():
@@ -60,5 +61,7 @@ def test_build_no_globals():
         , algo          = 'djb2'
         , seed          = random.randint(1, 10000)
         , debug         = True
-    ) ).returncode != 0:
-        raise Exception( "Failed to compile and run test program." )
+    )):
+        print( 'Passed local api call list test!' )
+    else:
+        fail( 'Failed to compile program with local api call list.' )
