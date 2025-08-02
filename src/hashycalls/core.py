@@ -5,7 +5,7 @@ import json
 from hashycalls.colors import *
 
 # -------------------------- Constants --------------------------
-SCRIPT_VERSION      = "2.0.0"
+SCRIPT_VERSION      = "2.1.0"
 TEMPLATE_VERSION    = "2.0.0"
 
 NAME_LOOKUP  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'name-conversion.json' )
