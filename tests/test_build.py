@@ -69,7 +69,7 @@ def test_build_no_globals():
 
 def test_hash_algos():
     """ Test the hashycalls hashing algorithms """
-    for algo in [ 'sdbm', 'djb2' ]:
+    for algo in [ 'sdbm', 'djb2', 'murmur' ]:
         if compile( HashyCalls(
             apicalls        = [ 'GetCurrentProcessId', 'MessageBoxA' ]
             , globals       = True

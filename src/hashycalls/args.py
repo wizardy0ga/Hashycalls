@@ -60,7 +60,7 @@ def parse_user_args() -> argparse.ArgumentParser:
     build_opt_group.add_argument(
         '-al'
         , '--algo'
-        , choices   = [ 'sdbm', 'djb2' ]
+        , choices   = [ 'sdbm', 'djb2', 'murmur' ]
         , type      = str
         , default   = 'sdbm'
         , help      = 'An algorithm to hash the api calls with. Defaults to sdbm.'
