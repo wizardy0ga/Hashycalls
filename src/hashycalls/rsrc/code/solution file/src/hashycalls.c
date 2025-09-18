@@ -35,8 +35,15 @@
 
 // --- Functions
 # ifdef DEBUG
-# include <stdio.h>
-# define dbg(msg, ...) printf("[DEBUG]::Hashycalls.%s.L%d -> " msg "\n", __func__, __LINE__, ##__VA_ARGS__)
+# define dbg(msg, ...)                                                          \
+    if (1) {                                                                    \
+        LPSTR Buf = (LPSTR)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, 1024); \
+        if (Buf) {                                                              \
+            int len = wsprintfA(Buf, "[DEBUG]::Hashycalls.%s.L%d -> " msg "\n", __func__, __LINE__, ##__VA_ARGS__); \
+            WriteConsoleA(GetStdHandle(STD_OUTPUT_HANDLE), Buf, len, 0, 0);     \
+            HeapFree(GetProcessHeap(), 0x00, Buf);                              \
+        }                                                                       \
+    }
 # endif
 # ifndef DEBUG
 # define dbg(msg, ...) do {} while (0)
