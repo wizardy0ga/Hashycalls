@@ -10,7 +10,7 @@ build-backend   = "hatchling.build"
 [project]
 name        = "hashycalls"
 readme      = "Readme.md"
-version     = "2.1.0"
+version     = "2.1.1"
 description = "An Import Address Table obfuscation utility for C/C++ based windows implants"
 authors     = [ 
     {name="wizardy0ga"} 
