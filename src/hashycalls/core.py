@@ -5,8 +5,7 @@ import json
 from hashycalls.colors import *
 
 # -------------------------- Constants --------------------------
-SCRIPT_VERSION      = "2.1.0"
-TEMPLATE_VERSION    = "2.0.0"
+VERSION = "2.1.1"
 
 NAME_LOOKUP  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'name-conversion.json' )
 TYPE_LOOKUP  = os.path.join( os.path.dirname( os.path.abspath( __file__ ) ), 'rsrc', 'data', 'type-conversion.json' )
@@ -178,7 +177,7 @@ class SourceCode( object ):
         self.comment_regex  = []
         self.source_file    = source_file
         self.header_content = \
-            f"Generated with hashycalls v-{ SCRIPT_VERSION }\nTemplate version: { TEMPLATE_VERSION }\nCommandline: { ' '.join( sys.argv ) }" 
+            f"Generated with hashycalls v-{ VERSION }\nCommandline: { ' '.join( sys.argv ) }" 
         
         with open( self.source_file, 'r' ) as file:
             self.content = file.read()

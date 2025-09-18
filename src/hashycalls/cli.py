@@ -22,7 +22,7 @@ def print_banner( key_width: int, val_width: int ) -> int:
     print( f"║{' '.center( key_width + val_width + 4, ' ' ) }{ RED }║")
     print( f"║{ RED }{ description.center( val_width + key_width + 4, ' ' ) }{ RED }║")
     print( f"║{ 'Coded By: Wizardy0ga'.center( val_width + key_width + 4 ) }║")
-    print( f"║{ f'Script Version: { SCRIPT_VERSION } | Template Version: { TEMPLATE_VERSION }'.center( key_width + val_width + 4 ) }║")
+    print( f"║{ f'Version: { VERSION }'.center( key_width + val_width + 4 ) }║")
     print( f"║{' '.center( key_width + val_width + 4, ' ' ) }{ RED }║")
 
     return ret
